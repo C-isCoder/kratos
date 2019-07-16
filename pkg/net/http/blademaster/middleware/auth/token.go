@@ -95,20 +95,7 @@ func (jwt JWT) String() string {
 }
 
 func VerifyToken(secret, token string) (uid int64, err error) {
-	if token == "" {
-		err = _noTokenError
-		return
-	}
-	ss := strings.Split(token, " ")
-	if len(ss) != 2 {
-		err = _failTokenError
-		return
-	}
-	if strings.ToUpper(ss[0]) != _br {
-		err = _failTokenError
-		return
-	}
-	jwt := JWT(ss[1])
+	jwt := JWT(token)
 	if jwt == "null" || jwt == "" {
 		err = _failTokenError
 		return

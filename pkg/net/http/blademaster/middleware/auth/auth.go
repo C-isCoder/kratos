@@ -110,7 +110,20 @@ func (a *Auth) authToken(ctx *bm.Context) (mid int64, err error) {
 	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
 	req := ctx.Request
 	token := req.Header.Get(TypeToken)
-	mid, err = VerifyToken(a.conf.JwtSecret, token)
+	if token == "" {
+		err = _noTokenError
+		return
+	}
+	ss := strings.Split(token, " ")
+	if len(ss) != 2 {
+		err = _failTokenError
+		return
+	}
+	if strings.ToUpper(ss[0]) != _br {
+		err = _failTokenError
+		return
+	}
+	mid, err = VerifyToken(a.conf.JwtSecret, ss[1])
 	return
 }
 
@@ -119,13 +132,15 @@ func (a *Auth) authCookie(ctx *bm.Context) (mid int64, err error) {
 	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
 	req := ctx.Request
 	session, err := req.Cookie(CookieKey)
-	log.Info("session (%v) err(%v)", session, err)
 	if session == nil {
 		err = _noTokenError
 		return
 	}
 	token := session.Value
-	log.Info("token (%v)", token)
+	if token == "" {
+		err = _noTokenError
+		return
+	}
 	mid, err = VerifyToken(a.conf.JwtSecret, token)
 	if err != nil {
 		return
