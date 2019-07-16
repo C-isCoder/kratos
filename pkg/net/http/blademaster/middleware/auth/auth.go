@@ -10,6 +10,8 @@ import (
 type Config struct {
 	// csrf switch.
 	DisableCSRF bool
+	JwtSecret   string
+	Filters     []string
 }
 
 // Auth is the authorization middleware
@@ -22,6 +24,8 @@ type authFunc func(*bm.Context) (int64, error)
 
 var _defaultConf = &Config{
 	DisableCSRF: false,
+	JwtSecret:   "",
+	Filters:     []string{},
 }
 
 // New is used to create an authorization middleware
@@ -36,11 +40,11 @@ func New(conf *Config) *Auth {
 }
 
 // User is used to mark path as access required.
-// If `access_token` is exist in request form, it will using mobile access policy.
+// If `Cookie` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
 func (a *Auth) User(ctx *bm.Context) {
 	req := ctx.Request
-	if req.Form.Get("access_token") == "" {
+	if req.Header.Get(TypeCookie) == "" {
 		a.UserWeb(ctx)
 		return
 	}
@@ -58,11 +62,11 @@ func (a *Auth) UserMobile(ctx *bm.Context) {
 }
 
 // Guest is used to mark path as guest policy.
-// If `access_token` is exist in request form, it will using mobile access policy.
+// If `Cookie` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
 func (a *Auth) Guest(ctx *bm.Context) {
 	req := ctx.Request
-	if req.Form.Get("access_token") == "" {
+	if req.Header.Get(TypeCookie) == "" {
 		a.GuestWeb(ctx)
 		return
 	}
@@ -80,40 +84,38 @@ func (a *Auth) GuestMobile(ctx *bm.Context) {
 }
 
 // authToken is used to authorize request by token
-func (a *Auth) authToken(ctx *bm.Context) (int64, error) {
-	req := ctx.Request
-	key := req.Form.Get("access_token")
-	if key == "" {
-		return 0, ecode.Unauthorized
-	}
+func (a *Auth) authToken(ctx *bm.Context) (mid int64, err error) {
 	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
-	var mid int64
-	// TODO: get mid from some code
-	return mid, nil
+	req := ctx.Request
+	token := req.Header.Get(TypeToken)
+	mid, err = VerifyToken(a.conf.JwtSecret, token)
+	return
 }
 
 // authCookie is used to authorize request by cookie
-func (a *Auth) authCookie(ctx *bm.Context) (int64, error) {
-	req := ctx.Request
-	session, _ := req.Cookie("SESSION")
-	if session == nil {
-		return 0, ecode.Unauthorized
-	}
+func (a *Auth) authCookie(ctx *bm.Context) (mid int64, err error) {
 	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
-	var mid int64
-	// TODO: get mid from some code
-
-	// check csrf
-	clientCsrf := req.FormValue("csrf")
-	if a.conf != nil && !a.conf.DisableCSRF && req.Method == "POST" {
-		// NOTE: 如果开启了CSRF认证，请从CSRF服务获取该用户关联的csrf
-		var csrf string // TODO: get csrf from some code
-		if clientCsrf != csrf {
-			return 0, ecode.Unauthorized
-		}
+	req := ctx.Request
+	session, _ := req.Cookie(CookieKey)
+	if session == nil {
+		err = _failTokenError
+		return
 	}
-
-	return mid, nil
+	token := session.Value
+	mid, err = VerifyToken(a.conf.JwtSecret, token)
+	if err != nil {
+		return
+	}
+	// check csrf
+	//clientCsrf := req.FormValue("csrf")
+	//if a.conf != nil && !a.conf.DisableCSRF && req.Method == "POST" {
+	//	// NOTE: 如果开启了CSRF认证，请从CSRF服务获取该用户关联的csrf
+	//	var csrf string // TODO: get csrf from some code
+	//	if clientCsrf != csrf {
+	//		return 0, ecode.Unauthorized
+	//	}
+	//}
+	return
 }
 
 func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
