@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/bilibili/kratos/pkg/ecode"
-	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
 	"strings"
@@ -58,7 +57,6 @@ func New(conf *Config) bm.HandlerFunc {
 func (a *Auth) User(ctx *bm.Context) {
 	req := ctx.Request
 	ok := false
-	log.Info("request url (%s)", req.RequestURI)
 	for _, v := range a.conf.Filters {
 		if strings.Contains(req.RequestURI, v) {
 			ok = true
@@ -67,7 +65,7 @@ func (a *Auth) User(ctx *bm.Context) {
 	if ok {
 		return
 	}
-	if req.Header.Get(TypeCookie) == "" {
+	if req.Header.Get(TypeToken) == "" {
 		a.UserWeb(ctx)
 		return
 	}
