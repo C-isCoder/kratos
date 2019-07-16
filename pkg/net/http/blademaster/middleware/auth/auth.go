@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
 	"strings"
@@ -117,9 +118,10 @@ func (a *Auth) authToken(ctx *bm.Context) (mid int64, err error) {
 func (a *Auth) authCookie(ctx *bm.Context) (mid int64, err error) {
 	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
 	req := ctx.Request
-	session, _ := req.Cookie(CookieKey)
+	session, err := req.Cookie(CookieKey)
+	log.Info("session (%v) err(%v)", session, err)
 	if session == nil {
-		err = _failTokenError
+		err = _noTokenError
 		return
 	}
 	token := session.Value
