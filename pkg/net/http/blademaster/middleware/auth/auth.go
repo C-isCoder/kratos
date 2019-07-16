@@ -125,6 +125,7 @@ func (a *Auth) authCookie(ctx *bm.Context) (mid int64, err error) {
 		return
 	}
 	token := session.Value
+	log.Info("token (%v)", token)
 	mid, err = VerifyToken(a.conf.JwtSecret, token)
 	if err != nil {
 		return
