@@ -127,11 +127,6 @@ func VerifyToken(secret, token string) (uid int64, err error) {
 	return
 }
 
-func (jwt JWT) GetUID() int64 {
-	_, payload, _ := jwt.parse()
-	return payload.Uid
-}
-
 func (jwt JWT) IsAdmin() bool {
 	_, payload, _ := jwt.parse()
 	return payload.IsAdmin

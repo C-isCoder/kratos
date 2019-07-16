@@ -29,7 +29,7 @@ var _defaultConf = &Config{
 }
 
 // New is used to create an authorization middleware
-func New(conf *Config) *Auth {
+func NewAuth(conf *Config) *Auth {
 	if conf == nil {
 		conf = _defaultConf
 	}
@@ -37,6 +37,17 @@ func New(conf *Config) *Auth {
 		conf: conf,
 	}
 	return auth
+}
+func New(conf *Config) bm.HandlerFunc {
+	if conf == nil {
+		conf = _defaultConf
+	}
+	a := &Auth{
+		conf: conf,
+	}
+	return func(c *bm.Context) {
+		a.User(c)
+	}
 }
 
 // User is used to mark path as access required.
