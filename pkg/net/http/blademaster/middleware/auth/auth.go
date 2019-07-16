@@ -2,8 +2,10 @@ package auth
 
 import (
 	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
+	"strings"
 )
 
 // Config is the identify config model.
@@ -55,6 +57,16 @@ func New(conf *Config) bm.HandlerFunc {
 // Otherwise to web access policy.
 func (a *Auth) User(ctx *bm.Context) {
 	req := ctx.Request
+	ok := false
+	log.Info("request url (%s)", req.RequestURI)
+	for _, v := range a.conf.Filters {
+		if strings.Contains(req.RequestURI, v) {
+			ok = true
+		}
+	}
+	if ok {
+		return
+	}
 	if req.Header.Get(TypeCookie) == "" {
 		a.UserWeb(ctx)
 		return
