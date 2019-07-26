@@ -104,7 +104,6 @@ func VerifyToken(secret, token string) (uid int64, err error) {
 	}
 	h, p, sec256 := jwt.parse()
 	if now() > p.Exp {
-		log.Info("debug token exp , now(%v),Exp(%v)", now(), p.Exp)
 		err = _expiredTokenError
 		return
 	}
@@ -163,7 +162,6 @@ func (jwt JWT) parse() (header, payload, string) {
 	var h header
 	var p payload
 	var secret265 string
-	log.Info("debug token parse(%s)", sps)
 	hb, err := base64.URLEncoding.DecodeString(sps[0])
 	err = json.Unmarshal(hb, &h)
 	pb, err := base64.URLEncoding.DecodeString(sps[1])
