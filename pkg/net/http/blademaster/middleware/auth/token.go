@@ -102,6 +102,7 @@ func VerifyToken(secret, token string) (uid int64, err error) {
 	}
 	h, p, sec256 := jwt.parse()
 	if now() > p.Exp {
+		log.Info("debug token exp , now(%v),Exp(%v)", now(), p.Exp)
 		err = _expiredTokenError
 		return
 	}
