@@ -43,6 +43,8 @@ jti：JWT token ID
 */
 type payload struct {
 	Uid     int64         `json:"uid"` // 用户ID
+	Sub     string        `json:"sub"` // 用户ID
+	Aud     string        `json:"aud"`
 	Iss     string        `json:"iss"`
 	Exp     time.Duration `json:"exp"`
 	Nbf     time.Duration `json:"nbf"`
@@ -85,7 +87,7 @@ func hs265(secret string, head string, payload string) (hd64 string, pay64 strin
 	hm := hmac.New(sha256.New, []byte(secret))
 	hd64 = base64.URLEncoding.EncodeToString([]byte(head))
 	pay64 = base64.URLEncoding.EncodeToString([]byte(payload))
-	hm.Write([]byte(hd64 + "." + pay64 + "."))
+	hm.Write([]byte(hd64 + "." + pay64))
 	sect = hex.EncodeToString(hm.Sum(nil))
 	return
 }
@@ -135,14 +137,17 @@ func newHeader() string {
 }
 
 func newPayload(uid int64, name string, isAdmin bool) string {
-	payload := payload{}
-	payload.Uid = uid
-	payload.Name = name
-	payload.Nbf = now()
-	payload.IsAdmin = isAdmin
-	payload.Exp = payload.Nbf + _exp
+	p := payload{}
+	p.Iss = "iss"
+	p.Sub = "sub"
+	p.Aud = name
+	p.Uid = uid
+	p.Name = name
+	p.Nbf = now()
+	p.IsAdmin = isAdmin
+	p.Exp = p.Nbf + _exp
 
-	bytes, err := json.Marshal(payload)
+	bytes, err := json.Marshal(p)
 	if err != nil {
 		log.Error("JWT token.payload() error(%v)", err)
 	}
@@ -159,19 +164,13 @@ func (jwt JWT) parse() (header, payload, string) {
 	var p payload
 	var secret265 string
 	log.Info("debug token parse(%s)", sps)
-	for i := 0; i < 3; i++ {
-		by, err := base64.URLEncoding.DecodeString(sps[i])
-		log.Info("debug URLEncoding DecodeString(%v)", string(by))
-		if i == 0 {
-			err = json.Unmarshal(by, &h)
-		} else if i == 1 {
-			err = json.Unmarshal(by, &p)
-		} else {
-			secret265 = sps[i]
-		}
-		if err != nil {
-			log.Error("JWT token.parse() error(%v)", err)
-		}
+	hb, err := base64.URLEncoding.DecodeString(sps[0])
+	err = json.Unmarshal(hb, &h)
+	pb, err := base64.URLEncoding.DecodeString(sps[1])
+	err = json.Unmarshal(pb, &p)
+	secret265 = sps[2]
+	if err != nil {
+		log.Error("JWT token.parse() error(%v)", err)
 	}
 	return h, p, secret265
 }
