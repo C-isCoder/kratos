@@ -158,8 +158,10 @@ func (jwt JWT) parse() (header, payload, string) {
 	var h header
 	var p payload
 	var secret265 string
+	log.Info("debug token parse(%s)", sps)
 	for i := 0; i < 3; i++ {
 		by, err := base64.URLEncoding.DecodeString(sps[i])
+		log.Info("debug URLEncoding DecodeString(%v)", string(by))
 		if i == 0 {
 			err = json.Unmarshal(by, &h)
 		} else if i == 1 {
