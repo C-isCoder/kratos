@@ -6,7 +6,7 @@ const (
 `
 
 	_tplMySQLToml = `
-[demo]
+[mysql]
 	addr = "127.0.0.1:3306"
 	dsn = "{user}:{password}@tcp(127.0.0.1:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
 	readDSN = ["{user}:{password}@tcp(127.0.0.2:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8","{user}:{password}@tcp(127.0.0.3:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8,utf8mb4"]
@@ -18,9 +18,9 @@ const (
 	tranTimeout = "400ms"
 `
 	_tplMCToml = `
-demoExpire = "24h"
+memExpire = "24h"
 
-[demo]
+[mem]
 	name = "{{.Name}}"
 	proto = "tcp"
 	addr = "127.0.0.1:11211"
@@ -32,9 +32,9 @@ demoExpire = "24h"
 	idleTimeout = "80s"
 `
 	_tplRedisToml = `
-demoExpire = "24h"
+redisExpire = "24h"
 
-[demo]
+[redis]
 	name = "{{.Name}}"
 	proto = "tcp"
 	addr = "127.0.0.1:6389"
@@ -213,15 +213,15 @@ func checkErr(err error) {
 func New() (Dao) {
 	var (
 		dc struct {
-			Demo *sql.Config
+			Conf *sql.Config
 		}
 		rc struct {
-			Demo       *redis.Config
-			DemoExpire xtime.Duration
+			Conf   *redis.Config
+			Expire xtime.Duration
 		}
 		mc struct {
-			Demo       *memcache.Config
-			DemoExpire xtime.Duration
+			Conf   *memcache.Config
+			Expire xtime.Duration
 		}
 	)
 	checkErr(paladin.Get("mysql.toml").UnmarshalTOML(&dc))
@@ -229,13 +229,13 @@ func New() (Dao) {
 	checkErr(paladin.Get("memcache.toml").UnmarshalTOML(&mc))
 	return &dao{
 		// mysql
-		db: sql.NewMySQL(dc.Demo),
+		db: sql.NewMySQL(dc.Conf),
 		// redis
-		redis:       redis.NewPool(rc.Demo),
-		redisExpire: int32(time.Duration(rc.DemoExpire) / time.Second),
+		redis:       redis.NewPool(rc.Conf),
+		redisExpire: int32(time.Duration(rc.Expire) / time.Second),
 		// memcache
-		mc:       memcache.New(mc.Demo),
-		mcExpire: int32(time.Duration(mc.DemoExpire) / time.Second),
+		mc:       memcache.New(mc.Conf),
+		mcExpire: int32(time.Duration(mc.Expire) / time.Second),
 	}
 }
 
