@@ -4,15 +4,12 @@ import (
 	"github.com/bilibili/kratos/pkg/ecode"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
-	"strings"
 )
 
 // Config is the identify config model.
 type Config struct {
 	// csrf switch.
 	DisableCSRF bool
-	JwtSecret   string
-	Filters     []string
 }
 
 // Auth is the authorization middleware
@@ -25,12 +22,10 @@ type authFunc func(*bm.Context) (int64, error)
 
 var _defaultConf = &Config{
 	DisableCSRF: false,
-	JwtSecret:   "",
-	Filters:     []string{},
 }
 
 // New is used to create an authorization middleware
-func NewAuth(conf *Config) *Auth {
+func New(conf *Config) *Auth {
 	if conf == nil {
 		conf = _defaultConf
 	}
@@ -39,33 +34,13 @@ func NewAuth(conf *Config) *Auth {
 	}
 	return auth
 }
-func New(conf *Config) bm.HandlerFunc {
-	if conf == nil {
-		conf = _defaultConf
-	}
-	a := &Auth{
-		conf: conf,
-	}
-	return func(c *bm.Context) {
-		a.User(c)
-	}
-}
 
 // User is used to mark path as access required.
-// If `Cookie` is exist in request form, it will using mobile access policy.
+// If `access_token` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
 func (a *Auth) User(ctx *bm.Context) {
 	req := ctx.Request
-	ok := false
-	for _, v := range a.conf.Filters {
-		if strings.Contains(req.RequestURI, v) {
-			ok = true
-		}
-	}
-	if ok {
-		return
-	}
-	if req.Header.Get(TypeToken) == "" {
+	if req.Form.Get("access_token") == "" {
 		a.UserWeb(ctx)
 		return
 	}
@@ -83,11 +58,11 @@ func (a *Auth) UserMobile(ctx *bm.Context) {
 }
 
 // Guest is used to mark path as guest policy.
-// If `Cookie` is exist in request form, it will using mobile access policy.
+// If `access_token` is exist in request form, it will using mobile access policy.
 // Otherwise to web access policy.
 func (a *Auth) Guest(ctx *bm.Context) {
 	req := ctx.Request
-	if req.Header.Get(TypeCookie) == "" {
+	if req.Form.Get("access_token") == "" {
 		a.GuestWeb(ctx)
 		return
 	}
@@ -105,55 +80,40 @@ func (a *Auth) GuestMobile(ctx *bm.Context) {
 }
 
 // authToken is used to authorize request by token
-func (a *Auth) authToken(ctx *bm.Context) (mid int64, err error) {
-	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
+func (a *Auth) authToken(ctx *bm.Context) (int64, error) {
 	req := ctx.Request
-	token := req.Header.Get(TypeToken)
-	if token == "" {
-		err = _noTokenError
-		return
+	key := req.Form.Get("access_token")
+	if key == "" {
+		return 0, ecode.Unauthorized
 	}
-	ss := strings.Split(token, " ")
-	if len(ss) != 2 {
-		err = _failTokenError
-		return
-	}
-	if strings.ToUpper(ss[0]) != _br {
-		err = _failTokenError
-		return
-	}
-	mid, err = VerifyToken(a.conf.JwtSecret, ss[1])
-	return
+	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
+	var mid int64
+	// TODO: get mid from some code
+	return mid, nil
 }
 
 // authCookie is used to authorize request by cookie
-func (a *Auth) authCookie(ctx *bm.Context) (mid int64, err error) {
-	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
+func (a *Auth) authCookie(ctx *bm.Context) (int64, error) {
 	req := ctx.Request
-	session, err := req.Cookie(CookieKey)
+	session, _ := req.Cookie("SESSION")
 	if session == nil {
-		err = _noTokenError
-		return
+		return 0, ecode.Unauthorized
 	}
-	token := session.Value
-	if token == "" {
-		err = _noTokenError
-		return
-	}
-	mid, err = VerifyToken(a.conf.JwtSecret, token)
-	if err != nil {
-		return
-	}
+	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
+	var mid int64
+	// TODO: get mid from some code
+
 	// check csrf
-	//clientCsrf := req.FormValue("csrf")
-	//if a.conf != nil && !a.conf.DisableCSRF && req.Method == "POST" {
-	//	// NOTE: 如果开启了CSRF认证，请从CSRF服务获取该用户关联的csrf
-	//	var csrf string // TODO: get csrf from some code
-	//	if clientCsrf != csrf {
-	//		return 0, ecode.Unauthorized
-	//	}
-	//}
-	return
+	clientCsrf := req.FormValue("csrf")
+	if a.conf != nil && !a.conf.DisableCSRF && req.Method == "POST" {
+		// NOTE: 如果开启了CSRF认证，请从CSRF服务获取该用户关联的csrf
+		var csrf string // TODO: get csrf from some code
+		if clientCsrf != csrf {
+			return 0, ecode.Unauthorized
+		}
+	}
+
+	return mid, nil
 }
 
 func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
