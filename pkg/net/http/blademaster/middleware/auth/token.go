@@ -77,12 +77,16 @@ HMACSHA256(
   secret
 )
 */
-func (p payload) NewPayload(mid, pid int64, role int8, isAdmin bool) payload {
+func NewPayload(name string, mid, pid int64, role int8, isAdmin bool) payload {
+	p := payload{}
 	p.MID = mid
 	p.PID = pid
+	p.Name = name
+	p.Role = role
 	p.IsAdmin = isAdmin
 	p.Iss = "iss"
 	p.Sub = "sub"
+	p.Aud = "aud"
 	p.Nbf = now()
 	p.Exp = p.Nbf + _exp
 	return p
