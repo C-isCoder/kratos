@@ -6,7 +6,7 @@ const (
 `
 
 	_tplMySQLToml = `
-[mysql]
+[conf]
 	addr = "127.0.0.1:3306"
 	dsn = "{user}:{password}@tcp(127.0.0.1:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
 	readDSN = ["{user}:{password}@tcp(127.0.0.2:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8","{user}:{password}@tcp(127.0.0.3:3306)/{database}?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8,utf8mb4"]
@@ -18,9 +18,9 @@ const (
 	tranTimeout = "400ms"
 `
 	_tplMCToml = `
-memExpire = "24h"
+expire = "24h"
 
-[mem]
+[conf]
 	name = "{{.Name}}"
 	proto = "tcp"
 	addr = "127.0.0.1:11211"
@@ -32,9 +32,9 @@ memExpire = "24h"
 	idleTimeout = "80s"
 `
 	_tplRedisToml = `
-redisExpire = "24h"
+expire = "24h"
 
-[redis]
+[conf]
 	name = "{{.Name}}"
 	proto = "tcp"
 	addr = "127.0.0.1:6389"
