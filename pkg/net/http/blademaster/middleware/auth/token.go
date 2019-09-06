@@ -6,23 +6,24 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"github.com/bilibili/kratos/pkg/ecode"
-	"github.com/bilibili/kratos/pkg/log"
 	"strings"
 	"time"
+
+	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/log"
 )
 
 type JWT string
 
 var (
 	// _noTokenError 未传 token
-	_noTokenError = ecode.Error(ecode.AccessDenied, "token not null")
+	_noTokenError = ecode.Error(ecode.AccessDenied, "令牌未携带")
 	// _failTokenError Token格式错误
-	_failTokenError = ecode.Error(ecode.Unauthorized, "token format error")
+	_failTokenError = ecode.Error(ecode.Unauthorized, "令牌格式化错误")
 	// _expiredTokenError token 过期
-	_expiredTokenError = ecode.Error(ecode.Unauthorized, "token is expired")
+	_expiredTokenError = ecode.Error(ecode.Unauthorized, "令牌过期了，请重新登录")
 	// _changeTokenError token 被窜改
-	_changeTokenError = ecode.Error(ecode.AccessDenied, "token is bad")
+	_changeTokenError = ecode.Error(ecode.AccessDenied, "令牌坏掉了")
 	// 过期间隔 2 hour
 	_exp = time.Duration(2 * (60 /*s*/ * 60 /*m*/))
 	// test 1 min
@@ -32,6 +33,7 @@ var (
 	CookieKey  = "SESSION"
 	_br        = "BEARER"
 )
+
 /*
 iss：JWT token 的签发者
 sub：主题
@@ -42,14 +44,16 @@ nbf：JWT token 生效时间
 jti：JWT token ID
 */
 type payload struct {
-	Uid     int64         `json:"uid"` // 用户ID
-	Sub     string        `json:"sub"` // 用户ID
+	MID     int64         `json:"mid"`  // 用户ID
+	PID     int64         `json:"pid"`  // 父id
+	Role    int8          `json:"role"` // 账号角色
+	Sub     string        `json:"sub"`
 	Aud     string        `json:"aud"`
 	Iss     string        `json:"iss"`
 	Exp     time.Duration `json:"exp"`
 	Nbf     time.Duration `json:"nbf"`
 	Name    string        `json:"name"`
-	IsAdmin bool          `json:"is_admin"`
+	IsAdmin bool          `json:"is_admin"` // 是否管理员
 }
 
 /**
@@ -73,12 +77,21 @@ HMACSHA256(
   secret
 )
 */
+func (p payload) NewPayload(mid, pid int64, role int8, isAdmin bool) payload {
+	p.MID = mid
+	p.PID = pid
+	p.IsAdmin = isAdmin
+	p.Iss = "iss"
+	p.Sub = "sub"
+	p.Nbf = now()
+	p.Exp = p.Nbf + _exp
+	return p
+}
 
-func NewToken(secret string, uid int64, name string, isAdmin bool) JWT {
+func NewToken(secret string, payload payload) JWT {
 	head := newHeader()
-	payload := newPayload(uid, name, isAdmin)
 	//log.Info("secret=%s", hc.JwtSecret)
-	head64, payload64, secret265 := hs265(secret, head, payload)
+	head64, payload64, secret265 := hs265(secret, head, payload.string())
 	jwt := head64 + "." + payload64 + "." + secret265
 	return JWT(jwt)
 }
@@ -96,7 +109,7 @@ func (jwt JWT) String() string {
 	return string(jwt)
 }
 
-func VerifyToken(secret, token string) (uid int64, err error) {
+func VerifyToken(secret, token string) (mid int64, err error) {
 	jwt := JWT(token)
 	if jwt == "null" || jwt == "" {
 		err = _failTokenError
@@ -112,13 +125,23 @@ func VerifyToken(secret, token string) (uid int64, err error) {
 		err = _changeTokenError
 		return
 	}
-	uid = p.Uid
+	mid = p.MID
 	return
 }
 
 func (jwt JWT) IsAdmin() bool {
 	_, payload, _ := jwt.parse()
 	return payload.IsAdmin
+}
+
+func (jwt JWT) GetMid() int64 {
+	_, payload, _ := jwt.parse()
+	return payload.MID
+}
+
+func (jwt JWT) GetPid() int64 {
+	_, payload, _ := jwt.parse()
+	return payload.PID
 }
 
 func (jwt JWT) GetName() string {
@@ -131,24 +154,6 @@ func newHeader() string {
 	bytes, err := json.Marshal(header)
 	if err != nil {
 		log.Error("JWT token.header() error(%v)", err)
-	}
-	return string(bytes)
-}
-
-func newPayload(uid int64, name string, isAdmin bool) string {
-	p := payload{}
-	p.Iss = "iss"
-	p.Sub = "sub"
-	p.Aud = name
-	p.Uid = uid
-	p.Name = name
-	p.Nbf = now()
-	p.IsAdmin = isAdmin
-	p.Exp = p.Nbf + _exp
-
-	bytes, err := json.Marshal(p)
-	if err != nil {
-		log.Error("JWT token.payload() error(%v)", err)
 	}
 	return string(bytes)
 }
@@ -181,10 +186,10 @@ func (h header) string() string {
 	return string(bytes)
 }
 
-func (payload payload) string() string {
-	bytes, err := json.Marshal(payload)
+func (p payload) string() string {
+	bytes, err := json.Marshal(p)
 	if err != nil {
-		log.Error("JWT payload.string() error(%v)", err)
+		log.Error("JWT p.string() error(%v)", err)
 	}
 	return string(bytes)
 }
