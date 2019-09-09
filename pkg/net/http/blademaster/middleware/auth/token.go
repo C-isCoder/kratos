@@ -9,30 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bilibili/kratos/pkg/ecode"
 	"github.com/bilibili/kratos/pkg/log"
 )
 
 type JWT string
-
-var (
-	// _noTokenError 未传 token
-	_noTokenError = ecode.Error(ecode.AccessDenied, "令牌未携带")
-	// _failTokenError Token格式错误
-	_failTokenError = ecode.Error(ecode.Unauthorized, "令牌格式化错误")
-	// _expiredTokenError token 过期
-	_expiredTokenError = ecode.Error(ecode.Unauthorized, "令牌过期了，请重新登录")
-	// _changeTokenError token 被窜改
-	_changeTokenError = ecode.Error(ecode.AccessDenied, "令牌坏掉了")
-	// 过期间隔 2 hour
-	_exp = time.Duration(2 * (60 /*s*/ * 60 /*m*/))
-	// test 1 min
-	// _exp = time.Duration(1 * 60)
-	TypeToken  = "Authorization"
-	TypeCookie = "Cookie"
-	CookieKey  = "SESSION"
-	_br        = "BEARER"
-)
 
 /*
 iss：JWT token 的签发者
@@ -113,9 +93,9 @@ func (jwt JWT) String() string {
 	return string(jwt)
 }
 
-func VerifyToken(secret, token string) (mid int64, err error) {
+func VerifyToken(secret, token string) (p payload, err error) {
 	jwt := JWT(token)
-	if jwt == "null" || jwt == "" {
+	if jwt == "null" || jwt == "" || !strings.HasSuffix(token, _bearer) {
 		err = _failTokenError
 		return
 	}
@@ -129,7 +109,6 @@ func VerifyToken(secret, token string) (mid int64, err error) {
 		err = _changeTokenError
 		return
 	}
-	mid = p.MID
 	return
 }
 
@@ -167,7 +146,8 @@ func now() time.Duration {
 }
 
 func (jwt JWT) parse() (header, payload, string) {
-	sps := strings.Split(jwt.String(), ".")
+	token := strings.Replace(jwt.String(), _bearer, "", 1)
+	sps := strings.Split(token, ".")
 	var h header
 	var p payload
 	var secret265 string
