@@ -29,8 +29,8 @@ var _defaultConf = &Config{
 	Filters:     make([]string, 0),
 }
 
-// New is used to create an authorization middleware
-func New(conf *Config) *Auth {
+// newAuth is used to create an authorization middleware
+func newAuth(conf *Config) *Auth {
 	if conf == nil {
 		conf = _defaultConf
 	}
@@ -68,7 +68,7 @@ var (
 	// _exp = time.Duration(1 * 60)
 )
 
-func Authentication(conf *Config) bm.HandlerFunc {
+func New(conf *Config) bm.HandlerFunc {
 	return func(ctx *bm.Context) {
 		req := ctx.Request
 		ok := false
@@ -83,7 +83,7 @@ func Authentication(conf *Config) bm.HandlerFunc {
 			ctx.Next()
 			return
 		}
-		ah := New(conf)
+		ah := newAuth(conf)
 		ah.User(ctx)
 	}
 }
