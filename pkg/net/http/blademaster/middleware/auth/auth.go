@@ -5,6 +5,7 @@ import (
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -12,6 +13,7 @@ import (
 type Config struct {
 	// csrf switch.
 	DisableCSRF bool
+	Filters     []string
 }
 
 // Auth is the authorization middleware
@@ -20,10 +22,11 @@ type Auth struct {
 }
 
 // authFunc will return mid and error by given context
-type authFunc func(*bm.Context) (payload, error)
+type authFunc func(*bm.Context) (*payload, error)
 
 var _defaultConf = &Config{
 	DisableCSRF: false,
+	Filters:     make([]string, 0),
 }
 
 // New is used to create an authorization middleware
@@ -65,9 +68,22 @@ var (
 	// _exp = time.Duration(1 * 60)
 )
 
-func Authentication() bm.HandlerFunc {
+func Authentication(conf *Config) bm.HandlerFunc {
 	return func(ctx *bm.Context) {
-		ah := New(_defaultConf)
+		req := ctx.Request
+		ok := false
+		if conf != nil {
+			for _, f := range conf.Filters {
+				if strings.Contains(req.RequestURI, f) {
+					ok = true
+				}
+			}
+		}
+		if ok {
+			ctx.Next()
+			return
+		}
+		ah := New(conf)
 		ah.User(ctx)
 	}
 }
@@ -113,15 +129,15 @@ func (a *Auth) UserMobile(ctx *bm.Context) {
 //}
 
 // authToken is used to authorize request by token
-func (a *Auth) authToken(ctx *bm.Context) (payload, error) {
+func (a *Auth) authToken(ctx *bm.Context) (*payload, error) {
 	req := ctx.Request
 	key := req.Header.Get(_authorization)
 	if key == "" {
-		return payload{}, _noTokenError
+		return nil, _noTokenError
 	}
 	secret := os.Getenv(_secret)
 	if secret == "" {
-		return payload{}, _osEnvError
+		return nil, _osEnvError
 	}
 	// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
 	p, err := VerifyToken(secret, key)

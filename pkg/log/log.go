@@ -40,7 +40,7 @@ type Config struct {
 	//   "dao*" = 2
 	// sets the V level to 2 in all Go files whose names begin "dao".
 	Module map[string]int32
-	// Filter tell log handler which field are sensitive message, use * instead.
+	// Filters tell log handler which field are sensitive message, use * instead.
 	Filter []string
 }
 

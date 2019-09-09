@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"os"
 	"strings"
 	"time"
 
@@ -57,7 +58,15 @@ HMACSHA256(
   secret
 )
 */
-func NewPayload(name string, mid, pid int64, role int8, isAdmin bool) payload {
+
+func NewToken(name string, mid, pid int64, role int8, isAdmin bool) (JWT, error) {
+	secret := os.Getenv(_secret)
+	if secret == "" {
+		log.Error("read os env error(%v)", _osEnvError)
+		return "", _osEnvError
+	}
+	log.Info("secret=%s", secret)
+
 	p := payload{}
 	p.MID = mid
 	p.PID = pid
@@ -69,15 +78,11 @@ func NewPayload(name string, mid, pid int64, role int8, isAdmin bool) payload {
 	p.Aud = "aud"
 	p.Nbf = now()
 	p.Exp = p.Nbf + _exp
-	return p
-}
 
-func NewToken(secret string, payload payload) JWT {
 	head := newHeader()
-	//log.Info("secret=%s", hc.JwtSecret)
-	head64, payload64, secret265 := hs265(secret, head, payload.string())
+	head64, payload64, secret265 := hs265(secret, head, p.string())
 	jwt := head64 + "." + payload64 + "." + secret265
-	return JWT(jwt)
+	return JWT(jwt), nil
 }
 
 func hs265(secret string, head string, payload string) (hd64 string, pay64 string, sect string) {
@@ -93,7 +98,7 @@ func (jwt JWT) String() string {
 	return string(jwt)
 }
 
-func VerifyToken(secret, token string) (p payload, err error) {
+func VerifyToken(secret, token string) (p *payload, err error) {
 	jwt := JWT(token)
 	if jwt == "null" || jwt == "" || !strings.HasSuffix(token, _bearer) {
 		err = _failTokenError
@@ -145,7 +150,7 @@ func now() time.Duration {
 	return time.Duration(time.Now().Unix())
 }
 
-func (jwt JWT) parse() (header, payload, string) {
+func (jwt JWT) parse() (header, *payload, string) {
 	token := strings.Replace(jwt.String(), _bearer, "", 1)
 	sps := strings.Split(token, ".")
 	var h header
@@ -159,7 +164,7 @@ func (jwt JWT) parse() (header, payload, string) {
 	if err != nil {
 		log.Error("JWT token.parse() error(%v)", err)
 	}
-	return h, p, secret265
+	return h, &p, secret265
 }
 
 func (h header) string() string {
