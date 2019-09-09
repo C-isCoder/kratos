@@ -100,7 +100,7 @@ func (jwt JWT) String() string {
 
 func VerifyToken(secret, token string) (p *payload, err error) {
 	jwt := JWT(token)
-	if jwt == "null" || jwt == "" || !strings.HasSuffix(token, _bearer) {
+	if jwt == "null" || jwt == "" || !strings.Contains(token, _bearer) {
 		err = _failTokenError
 		return
 	}
