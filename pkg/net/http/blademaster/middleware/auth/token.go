@@ -65,7 +65,7 @@ func NewToken(name string, mid, pid int64, role int8, isAdmin bool) (JWT, error)
 		log.Error("read os env error(%v)", _osEnvError)
 		return "", _osEnvError
 	}
-	log.Info("secret=%s", secret)
+	//log.Info("secret=%s", secret)
 
 	p := payload{}
 	p.MID = mid

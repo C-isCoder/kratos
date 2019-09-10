@@ -2,7 +2,6 @@ package metadata
 
 // metadata common key
 const (
-
 	// Network
 	RemoteIP   = "remote_ip"
 	RemotePort = "remote_port"
@@ -28,14 +27,17 @@ const (
 	// Mirror
 	Mirror = "mirror"
 
-	// Mid 外网账户用户id
-	Mid = "mid" // NOTE: ！！！业务可重新修改key名！！！
-
 	// Device 客户端信息
 	Device = "device"
 
 	// Criticality 重要性
 	Criticality = "criticality"
+
+	// Token 用户信息 Mid 外网账户用户id
+	Mid     = "mid"     // NOTE: ！！！业务可重新修改key名！！！
+	Pid     = "pid"     // 用户的父id业务场景：子账号
+	IsAdmin = "isAdmin" // 是否是管理员
+	Role    = "role"    // 用户身份
 )
 
 var outgoingKey = map[string]struct{}{

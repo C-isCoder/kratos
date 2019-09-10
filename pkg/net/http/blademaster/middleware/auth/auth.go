@@ -183,12 +183,7 @@ func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
 		ctx.Abort()
 		return
 	}
-	ctx.Set("mid", p.MID)
-	ctx.Set("pid", p.PID)
-	ctx.Set("isAdmin", p.IsAdmin)
-	ctx.Set("role", p.Role)
-	ctx.Set("name", p.Name)
-	setMid(ctx, p.MID)
+	setMetadata(ctx, p)
 	ctx.Next()
 }
 
@@ -196,7 +191,7 @@ func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
 //	mid, err := auth(ctx)
 //	// no error happened and mid is valid
 //	if err == nil && mid > 0 {
-//		setMid(ctx, mid)
+//		setMetadata(ctx, mid)
 //		return
 //	}
 //
@@ -210,10 +205,16 @@ func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
 
 // set mid into context
 // NOTE: This method is not thread safe.
-func setMid(ctx *bm.Context, mid int64) {
-	ctx.Set(metadata.Mid, mid)
+func setMetadata(ctx *bm.Context, p *payload) {
+	ctx.Set(metadata.Mid, p.MID)
+	ctx.Set(metadata.Pid, p.PID)
+	ctx.Set(metadata.Role, p.Role)
+	ctx.Set(metadata.IsAdmin, p.IsAdmin)
 	if md, ok := metadata.FromContext(ctx); ok {
-		md[metadata.Mid] = mid
+		md[metadata.Mid] = p.MID
+		md[metadata.Pid] = p.PID
+		md[metadata.Role] = p.Role
+		md[metadata.IsAdmin] = p.IsAdmin
 		return
 	}
 }
