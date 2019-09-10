@@ -4,6 +4,7 @@ import (
 	"github.com/bilibili/kratos/pkg/ecode"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -43,7 +44,7 @@ func newAuth(conf *Config) *Auth {
 // User is used to mark path as access required.
 // If `User-Agent` is exist in request form, it will using web access policy.
 // Otherwise to web access policy.
-// Mobile user-agent format "{system};{device};{os_version};{app_version};
+// Mobile user-agent format "{platform};{device};{os_version};{app_version}"
 // eg "User-Agent":"iOS;iPhone;12.6.1;1.0.0"
 var (
 	_web = "Mozilla"
@@ -70,23 +71,16 @@ var (
 
 func New(conf *Config) bm.HandlerFunc {
 	return func(ctx *bm.Context) {
+		setDevice(ctx)
 		req := ctx.Request
-		ok := false
-		if conf != nil {
-			for _, f := range conf.Filters {
-				if strings.Contains(req.RequestURI, f) {
-					ok = true
-				}
-			}
-		}
-		if ok {
-			ctx.Next()
+		if check(conf, req, ctx) {
 			return
 		}
 		ah := newAuth(conf)
 		ah.User(ctx)
 	}
 }
+
 func (a *Auth) User(ctx *bm.Context) {
 	//req := ctx.Request
 	//if strings.HasPrefix(req.UserAgent(), _web) {
@@ -206,25 +200,44 @@ func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
 // set mid into context
 // NOTE: This method is not thread safe.
 func setMetadata(ctx *bm.Context, p *payload) {
-	device := ctx.Request.UserAgent()
-	if strings.Contains(device, _web) {
-		device = ""
-	}
 	ctx.Set(metadata.Mid, p.MID)
 	ctx.Set(metadata.Pid, p.PID)
 	ctx.Set(metadata.Role, p.Role)
 	ctx.Set(metadata.IsAdmin, p.IsAdmin)
-	if device != "" {
-		ctx.Set(metadata.Device, device)
-	}
 	if md, ok := metadata.FromContext(ctx); ok {
 		md[metadata.Mid] = p.MID
 		md[metadata.Pid] = p.PID
 		md[metadata.Role] = p.Role
 		md[metadata.IsAdmin] = p.IsAdmin
-		if device != "" {
-			md[metadata.Device] = device
-		}
 		return
 	}
+}
+// set device info into context
+func setDevice(ctx *bm.Context) {
+	device := ctx.Request.UserAgent()
+	if strings.Contains(device, _web) {
+		device = ""
+	}
+	if device != "" {
+		ctx.Set(metadata.Device, device)
+		if md, ok := metadata.FromContext(ctx); ok {
+			md[metadata.Device] = device
+		}
+	}
+}
+// check need auth
+func check(conf *Config, req *http.Request, ctx *bm.Context) bool {
+	noNeed := false
+	if conf != nil {
+		for _, f := range conf.Filters {
+			if strings.Contains(req.RequestURI, f) {
+				noNeed = true
+			}
+		}
+	}
+	if noNeed {
+		ctx.Next()
+		return true
+	}
+	return false
 }
