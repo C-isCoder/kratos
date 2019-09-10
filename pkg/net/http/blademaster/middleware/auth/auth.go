@@ -46,7 +46,7 @@ func newAuth(conf *Config) *Auth {
 // Mobile user-agent format "{system};{device};{os_version};{app_version};
 // eg "User-Agent":"iOS;iPhone;12.6.1;1.0.0"
 var (
-	//_web           = "Mozilla"
+	_web = "Mozilla"
 	//_session       = "SESSION"
 	_authorization = "Authorization"
 	_secret        = "JWT_SECRET"
@@ -206,15 +206,25 @@ func (a *Auth) midAuth(ctx *bm.Context, auth authFunc) {
 // set mid into context
 // NOTE: This method is not thread safe.
 func setMetadata(ctx *bm.Context, p *payload) {
+	device := ctx.Request.UserAgent()
+	if strings.Contains(device, _web) {
+		device = ""
+	}
 	ctx.Set(metadata.Mid, p.MID)
 	ctx.Set(metadata.Pid, p.PID)
 	ctx.Set(metadata.Role, p.Role)
 	ctx.Set(metadata.IsAdmin, p.IsAdmin)
+	if device != "" {
+		ctx.Set(metadata.Device, device)
+	}
 	if md, ok := metadata.FromContext(ctx); ok {
 		md[metadata.Mid] = p.MID
 		md[metadata.Pid] = p.PID
 		md[metadata.Role] = p.Role
 		md[metadata.IsAdmin] = p.IsAdmin
+		if device != "" {
+			md[metadata.Device] = device
+		}
 		return
 	}
 }
