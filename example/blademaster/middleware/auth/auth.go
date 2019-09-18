@@ -12,7 +12,7 @@ type Config struct {
 	DisableCSRF bool
 }
 
-// Auth is the authorization middleware
+// NoAuth is the authorization middleware
 type Auth struct {
 	conf *Config
 }

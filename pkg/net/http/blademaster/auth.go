@@ -37,8 +37,8 @@ var (
 func Auth() HandlerFunc {
 	return func(c *Context) {
 		req := c.Request
-		notAuth := metadata.Bool(c, metadata.Auth)
-		if notAuth {
+		_, ok := c.Params.Get("true")
+		if ok {
 			c.Next()
 		}
 		key := req.Header.Get(_authorization)

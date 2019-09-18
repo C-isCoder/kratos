@@ -38,7 +38,6 @@ const (
 	Pid     = "pid"     // 用户的父id业务场景：子账号
 	IsAdmin = "isAdmin" // 是否是管理员
 	Role    = "role"    // 用户身份
-	Auth    = "auth"    // 是否校验
 )
 
 var outgoingKey = map[string]struct{}{
