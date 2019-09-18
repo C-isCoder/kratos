@@ -19,6 +19,7 @@ func Logger() HandlerFunc {
 		req := c.Request
 		path := req.URL.Path
 		params := req.Form
+		device := req.UserAgent()
 		var quota float64
 		if deadline, ok := c.Context.Deadline(); ok {
 			quota = time.Until(deadline).Seconds()
@@ -53,6 +54,12 @@ func Logger() HandlerFunc {
 				lf = log.Warnv
 			}
 		}
+
+		c.Set(metadata.Device, device)
+		if md, ok := metadata.FromContext(c); ok {
+			md[metadata.Device] = device
+		}
+
 		lf(c,
 			log.KVString("method", req.Method),
 			log.KVString("ip", ip),
@@ -66,6 +73,7 @@ func Logger() HandlerFunc {
 			log.KVFloat64("timeout_quota", quota),
 			log.KVFloat64("ts", dt.Seconds()),
 			log.KVString("source", "http-access-log"),
+			log.KVString("device", device),
 		)
 	}
 }

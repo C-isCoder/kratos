@@ -209,7 +209,7 @@ func (engine *Engine) SetMethodConfig(path string, mc *MethodConfig) {
 // DefaultServer returns an Engine instance with the Recovery and Logger middleware already attached.
 func DefaultServer(conf *ServerConfig) *Engine {
 	engine := NewServer(conf)
-	engine.Use(Recovery(), Trace(), Logger())
+	engine.Use(Recovery(), Trace(), Logger(), Auth())
 	return engine
 }
 
