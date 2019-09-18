@@ -2,7 +2,6 @@ package blademaster
 
 import (
 	"github.com/bilibili/kratos/pkg/ecode"
-	"github.com/bilibili/kratos/pkg/log"
 	"github.com/bilibili/kratos/pkg/net/metadata"
 	"os"
 	"time"
@@ -44,7 +43,6 @@ func NoAuth(filter []string) {
 }
 func Auth() HandlerFunc {
 	return func(c *Context) {
-		log.Info("auth filter(%v)", _filter)
 		req := c.Request
 		noAuth := false
 		for _, v := range _filter {
@@ -54,6 +52,7 @@ func Auth() HandlerFunc {
 		}
 		if noAuth {
 			c.Next()
+			return
 		}
 		key := req.Header.Get(_authorization)
 		if key == "" {
