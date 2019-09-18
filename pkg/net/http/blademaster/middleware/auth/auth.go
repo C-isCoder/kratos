@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/metadata"
 	"net/http"
@@ -212,6 +213,7 @@ func setMetadata(ctx *bm.Context, p *payload) {
 		return
 	}
 }
+
 // set device info into context
 func setDevice(ctx *bm.Context) {
 	device := ctx.Request.UserAgent()
@@ -225,12 +227,14 @@ func setDevice(ctx *bm.Context) {
 		}
 	}
 }
+
 // check need auth
 func check(conf *Config, req *http.Request, ctx *bm.Context) bool {
 	noNeed := false
+	log.Info("auth token check filters(%v)", conf.Filters)
 	if conf != nil {
 		for _, f := range conf.Filters {
-			if strings.Contains(req.RequestURI, f) {
+			if req.URL.Path == f {
 				noNeed = true
 			}
 		}
