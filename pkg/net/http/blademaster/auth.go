@@ -33,7 +33,13 @@ var (
 	// test 1 min
 	// _exp = time.Duration(1 * 60)
 )
-var _filter []string
+var _filter = []string{
+	"/ping",
+	"/register",
+	"/metrics",
+	"/metadata",
+	"/debug/pprof/profile",
+}
 
 func NoAuth(filter []string) {
 	if len(filter) == 0 {
@@ -70,7 +76,6 @@ func Auth() HandlerFunc {
 			c.JSON(nil, err)
 			c.Abort()
 		}
-		c.Next()
 
 		c.Set(metadata.Mid, p.MID)
 		c.Set(metadata.Pid, p.PID)
@@ -82,5 +87,6 @@ func Auth() HandlerFunc {
 			md[metadata.Role] = p.Role
 			md[metadata.IsAdmin] = p.IsAdmin
 		}
+		c.Next()
 	}
 }
