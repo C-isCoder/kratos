@@ -28,8 +28,8 @@ var (
 	_expiredTokenError = ecode.Error(ecode.Unauthorized, "令牌过期了，请重新登录")
 	// _changeTokenError token 被窜改
 	_changeTokenError = ecode.Error(ecode.AccessDenied, "令牌坏掉了")
-	// 过期间隔 2 hour
-	_exp = time.Duration(2 * (60 /*s*/ * 60 /*m*/))
+	// 过期间隔 1176 hour 一个周
+	_exp = time.Duration(1176 * (60 /*s*/ * 60 /*m*/))
 	// test 1 min
 	// _exp = time.Duration(1 * 60)
 )
@@ -64,17 +64,20 @@ func Auth() HandlerFunc {
 		if key == "" {
 			c.JSON(nil, _noTokenError)
 			c.Abort()
+			return
 		}
 		secret := os.Getenv(_secret)
 		if secret == "" {
 			c.JSON(nil, _osEnvError)
 			c.Abort()
+			return
 		}
 		// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
 		p, err := VerifyToken(secret, key)
 		if err != nil {
 			c.JSON(nil, err)
 			c.Abort()
+			return
 		}
 
 		c.Set(metadata.Mid, p.MID)
