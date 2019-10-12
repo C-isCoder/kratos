@@ -20,6 +20,12 @@ func Logger() HandlerFunc {
 		path := req.URL.Path
 		params := req.Form
 		device := req.UserAgent()
+
+		c.Set(metadata.Device, device)
+		if md, ok := metadata.FromContext(c); ok {
+			md[metadata.Device] = device
+		}
+
 		var quota float64
 		if deadline, ok := c.Context.Deadline(); ok {
 			quota = time.Until(deadline).Seconds()
@@ -53,11 +59,6 @@ func Logger() HandlerFunc {
 			if isSlow {
 				lf = log.Warnv
 			}
-		}
-
-		c.Set(metadata.Device, device)
-		if md, ok := metadata.FromContext(c); ok {
-			md[metadata.Device] = device
 		}
 
 		lf(c,
