@@ -1,10 +1,11 @@
 package blademaster
 
 import (
-	"github.com/bilibili/kratos/pkg/ecode"
-	"github.com/bilibili/kratos/pkg/net/metadata"
 	"os"
 	"time"
+
+	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/net/metadata"
 )
 
 // User is used to mark path as access required.
@@ -41,12 +42,15 @@ var _filter = []string{
 	"/debug/pprof/profile",
 }
 
+// NoAuth not auth api
 func NoAuth(filter []string) {
 	if len(filter) == 0 {
 		return
 	}
 	_filter = append(filter, _filter...)
 }
+
+// Auth token auth handler
 func Auth() HandlerFunc {
 	return func(c *Context) {
 		req := c.Request
@@ -73,7 +77,7 @@ func Auth() HandlerFunc {
 			return
 		}
 		// NOTE: 请求登录鉴权服务接口，拿到对应的用户id
-		p, err := VerifyToken(secret, key)
+		p, err := verifyToken(secret, key)
 		if err != nil {
 			c.JSON(nil, err)
 			c.Abort()

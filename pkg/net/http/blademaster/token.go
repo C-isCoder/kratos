@@ -59,6 +59,7 @@ HMACSHA256(
 )
 */
 
+// NewToken create new jwt token
 func NewToken(name string, mid, pid int64, role int8, isAdmin bool) (JWT, error) {
 	secret := os.Getenv(_secret)
 	if secret == "" {
@@ -98,7 +99,7 @@ func (jwt JWT) String() string {
 	return string(jwt)
 }
 
-func VerifyToken(secret, token string) (p *payload, err error) {
+func verifyToken(secret, token string) (p *payload, err error) {
 	jwt := JWT(token)
 	if jwt == "null" || jwt == "" || !strings.Contains(token, _bearer) {
 		err = _failTokenError
@@ -117,21 +118,25 @@ func VerifyToken(secret, token string) (p *payload, err error) {
 	return
 }
 
+// IsAdmin is admintrator
 func (jwt JWT) IsAdmin() bool {
 	_, payload, _ := jwt.parse()
 	return payload.IsAdmin
 }
 
+// GetMid get member id
 func (jwt JWT) GetMid() int64 {
 	_, payload, _ := jwt.parse()
 	return payload.MID
 }
 
+// GetPid get parent id
 func (jwt JWT) GetPid() int64 {
 	_, payload, _ := jwt.parse()
 	return payload.PID
 }
 
+// GetName get member name
 func (jwt JWT) GetName() string {
 	_, payload, _ := jwt.parse()
 	return payload.Name
