@@ -13,6 +13,7 @@ import (
 	"github.com/bilibili/kratos/pkg/log"
 )
 
+// JWT jwt
 type JWT string
 
 /*
