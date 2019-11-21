@@ -28,7 +28,7 @@ jti：JWT token ID
 type payload struct {
 	MID     int64         `json:"mid"`  // 用户ID
 	PID     int64         `json:"pid"`  // 父id
-	Role    int8          `json:"role"` // 账号角色
+	Role    int64          `json:"role"` // 账号角色
 	Sub     string        `json:"sub"`
 	Aud     string        `json:"aud"`
 	Iss     string        `json:"iss"`
