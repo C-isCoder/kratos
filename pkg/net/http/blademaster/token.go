@@ -28,7 +28,7 @@ jti：JWT token ID
 type payload struct {
 	MID     int64         `json:"mid"`  // 用户ID
 	PID     int64         `json:"pid"`  // 父id
-	Role    int64          `json:"role"` // 账号角色
+	Role    int64         `json:"role"` // 账号角色
 	Sub     string        `json:"sub"`
 	Aud     string        `json:"aud"`
 	Iss     string        `json:"iss"`
@@ -61,13 +61,13 @@ HMACSHA256(
 */
 
 // NewToken create new jwt token
-func NewToken(name string, mid, pid int64, role int8, isAdmin bool) (JWT, error) {
+func NewToken(name string, mid, pid int64, role int64, isAdmin bool) (JWT, error) {
 	secret := os.Getenv(_secret)
 	if secret == "" {
 		log.Error("read os env error(%v)", _osEnvError)
 		return "", _osEnvError
 	}
-	//log.Info("secret=%s", secret)
+	// log.Info("secret=%s", secret)
 
 	p := payload{}
 	p.MID = mid
