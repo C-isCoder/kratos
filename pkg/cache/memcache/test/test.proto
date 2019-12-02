@@ -1,12 +1,11 @@
-syntax = "proto3";  
+syntax = "proto3";
 package proto;
 
-enum FOO 
-{ 
-    X = 0; 
+enum FOO {
+    X = 0;
 };
 
-message TestItem{
-    string Name = 1;  
-    int32 Age = 2;    
+message TestItem {
+    string Name = 1;
+    int32 Age = 2;
 }

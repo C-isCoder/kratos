@@ -108,11 +108,11 @@ func (t *bm) generateFileHeader(file *descriptor.FileDescriptorProto, pkgName st
 }
 
 func (t *bm) generateImports(file *descriptor.FileDescriptorProto) {
-	//if len(file.Service) == 0 {
+	// if len(file.Service) == 0 {
 	//	return
-	//}
+	// }
 	t.P(`import (`)
-	//t.P(`	`,t.pkgs["context"], ` "context"`)
+	// t.P(`	`,t.pkgs["context"], ` "context"`)
 	t.P(`	"context"`)
 	t.P()
 	t.P(`	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"`)
@@ -178,10 +178,10 @@ func (t *bm) generateBMRoute(
 		}
 		apiInfo := t.GetHttpInfoCached(file, service, method)
 		isLegacyPkg = apiInfo.IsLegacyPath
-		//httpMethod, legacyPath, path := getHttpInfo(file, service, method, t.reg)
-		//if legacyPath != "" {
+		// httpMethod, legacyPath, path := getHttpInfo(file, service, method, t.reg)
+		// if legacyPath != "" {
 		//	isLegacyPkg = true
-		//}
+		// }
 
 		midStr := tag.GetTagValue("midware", tags)
 		if midStr != "" {

@@ -41,7 +41,7 @@ func codeFromErr(err error) string {
 		code = "connot_find_region"
 	case gohbase.TableNotFound:
 		code = "table_not_found"
-		//case gohbase.ErrRegionUnavailable:
+		// case gohbase.ErrRegionUnavailable:
 		//	code = "region_unavailable"
 	}
 	return code

@@ -95,7 +95,7 @@ func main() {
 	} else {
 		cli = grpcCli()
 	}
-	//warmup
+	// warmup
 	cli.Say(context.Background(), args)
 
 	totalT := time.Now().UnixNano()

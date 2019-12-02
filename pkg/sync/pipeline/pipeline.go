@@ -42,7 +42,7 @@ type message struct {
 
 // Pipeline pipeline struct
 type Pipeline struct {
-	Do          func(c context.Context, index int, values map[string][]interface{})
+	Do func(c context.Context, index int, values map[string][]interface{})
 	Split       func(key string) int
 	chans       []chan *message
 	mirrorChans []chan *message

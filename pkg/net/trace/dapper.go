@@ -76,10 +76,10 @@ func (d *dapper) New(operationName string, opts ...Option) Trace {
 func (d *dapper) newSpanWithContext(operationName string, pctx spanContext) Trace {
 	sp := d.getSpan()
 	// is span is not sampled just return a span with this context, no need clear it
-	//if !pctx.isSampled() {
+	// if !pctx.isSampled() {
 	//	sp.context = pctx
 	//	return sp
-	//}
+	// }
 	if pctx.Level > _maxLevel {
 		// if span reach max limit level return noopspan
 		return noopspan{}

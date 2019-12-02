@@ -173,9 +173,9 @@ type DurationEncoder func(time.Duration, PrimitiveArrayEncoder)
 // EpochTimeEncoder serializes a time.Time to a floating-point number of seconds
 // since the Unix epoch.
 func EpochTimeEncoder(t time.Time, enc PrimitiveArrayEncoder) {
-	//var d []byte
+	// var d []byte
 	enc.AppendString(t.Format("2006-01-02T15:04:05.999999"))
-	//enc.AppendByteString(t.AppendFormat(d, "2006-01-02T15:04:05.999999"))
+	// enc.AppendByteString(t.AppendFormat(d, "2006-01-02T15:04:05.999999"))
 	/*nanos := t.UnixNano()
 	sec := float64(nanos) / float64(time.Second)
 	enc.AppendFloat64(sec)*/

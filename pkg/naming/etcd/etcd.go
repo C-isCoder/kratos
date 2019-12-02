@@ -20,11 +20,11 @@ import (
 )
 
 var (
-	//etcdPrefix is a etcd globe key prefix
+	// etcdPrefix is a etcd globe key prefix
 	endpoints  string
 	etcdPrefix string
 
-	//Time units is second
+	// Time units is second
 	registerTTL        = 90
 	defaultDialTimeout = 30
 )
@@ -32,7 +32,7 @@ var (
 var (
 	_once    sync.Once
 	_builder naming.Builder
-	//ErrDuplication is a register duplication err
+	// ErrDuplication is a register duplication err
 	ErrDuplication = errors.New("etcd: instance duplicate registration")
 )
 
@@ -202,7 +202,7 @@ func (e *EtcdBuilder) Register(ctx context.Context, ins *naming.Instance) (cance
 	return
 }
 
-//注册和续约公用一个操作
+// 注册和续约公用一个操作
 func (e *EtcdBuilder) register(ctx context.Context, ins *naming.Instance) (err error) {
 	prefix := e.keyPrefix(ins)
 	val, _ := json.Marshal(ins)

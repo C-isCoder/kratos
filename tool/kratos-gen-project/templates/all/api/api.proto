@@ -17,8 +17,8 @@ option (gogoproto.goproto_getters_all) = false;
 
 service Demo {
     rpc Ping (.google.protobuf.Empty) returns (.google.protobuf.Empty);
-	rpc SayHello (HelloReq) returns (.google.protobuf.Empty);
-	rpc SayHelloURL(HelloReq) returns (HelloResp) {
+    rpc SayHello (HelloReq) returns (.google.protobuf.Empty);
+    rpc SayHelloURL (HelloReq) returns (HelloResp) {
         option (google.api.http) = {
             get:"/kratos-demo/say_hello"
         };
@@ -26,7 +26,7 @@ service Demo {
 }
 
 message HelloReq {
-	string name = 1 [(gogoproto.moretags)='form:"name" validate:"required"'];
+    string name = 1 [(gogoproto.moretags) = 'form:"name" validate:"required"'];
 }
 
 message HelloResp {

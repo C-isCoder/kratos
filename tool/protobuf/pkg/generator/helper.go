@@ -108,7 +108,7 @@ func GetFieldRequired(
 	fComment, _ := reg.FieldComments(md, f)
 	var tags []reflect.StructTag
 	{
-		//get required info from gogoproto.moretags
+		// get required info from gogoproto.moretags
 		moretags := tag.GetMoreTags(f)
 		if moretags != nil {
 			tags = []reflect.StructTag{reflect.StructTag(*moretags)}

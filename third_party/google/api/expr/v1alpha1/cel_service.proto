@@ -31,14 +31,17 @@ option java_package = "com.google.api.expr.v1alpha1";
 // a server for this API.  The API will be used for conformance testing,
 // utilities, and execution as a service.
 service CelService {
-  // Transforms CEL source text into a parsed representation.
-  rpc Parse(ParseRequest) returns (ParseResponse) {}
+    // Transforms CEL source text into a parsed representation.
+    rpc Parse (ParseRequest) returns (ParseResponse) {
+    }
 
-  // Runs static checks on a parsed CEL representation and return
-  // an annotated representation, or a set of issues.
-  rpc Check(CheckRequest) returns (CheckResponse) {}
+    // Runs static checks on a parsed CEL representation and return
+    // an annotated representation, or a set of issues.
+    rpc Check (CheckRequest) returns (CheckResponse) {
+    }
 
-  // Evaluates a parsed or annotation CEL representation given
-  // values of external bindings.
-  rpc Eval(EvalRequest) returns (EvalResponse) {}
+    // Evaluates a parsed or annotation CEL representation given
+    // values of external bindings.
+    rpc Eval (EvalRequest) returns (EvalResponse) {
+    }
 }

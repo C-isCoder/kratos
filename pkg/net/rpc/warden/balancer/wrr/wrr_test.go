@@ -3,10 +3,11 @@ package wrr
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"testing"
 	"time"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/bilibili/kratos/pkg/conf/env"
 	nmd "github.com/bilibili/kratos/pkg/net/metadata"

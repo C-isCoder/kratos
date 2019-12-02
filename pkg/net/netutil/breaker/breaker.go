@@ -63,7 +63,7 @@ const (
 	// one request, but not state closed.
 	StateHalfopen
 
-	//_switchOn int32 = iota
+	// _switchOn int32 = iota
 	// _switchOff
 )
 

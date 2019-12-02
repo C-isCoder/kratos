@@ -25,38 +25,38 @@ option java_package = "com.google.api.expr.v1beta1";
 
 // Source information collected at parse time.
 message SourceInfo {
-  // The location name. All position information attached to an expression is
-  // relative to this location.
-  //
-  // The location could be a file, UI element, or similar. For example,
-  // `acme/app/AnvilPolicy.cel`.
-  string location = 2;
+    // The location name. All position information attached to an expression is
+    // relative to this location.
+    //
+    // The location could be a file, UI element, or similar. For example,
+    // `acme/app/AnvilPolicy.cel`.
+    string location = 2;
 
-  // Monotonically increasing list of character offsets where newlines appear.
-  //
-  // The line number of a given position is the index `i` where for a given
-  // `id` the `line_offsets[i] < id_positions[id] < line_offsets[i+1]`. The
-  // column may be derivd from `id_positions[id] - line_offsets[i]`.
-  repeated int32 line_offsets = 3;
+    // Monotonically increasing list of character offsets where newlines appear.
+    //
+    // The line number of a given position is the index `i` where for a given
+    // `id` the `line_offsets[i] < id_positions[id] < line_offsets[i+1]`. The
+    // column may be derivd from `id_positions[id] - line_offsets[i]`.
+    repeated int32 line_offsets = 3;
 
-  // A map from the parse node id (e.g. `Expr.id`) to the character offset
-  // within source.
-  map<int32, int32> positions = 4;
+    // A map from the parse node id (e.g. `Expr.id`) to the character offset
+    // within source.
+    map<int32, int32> positions = 4;
 }
 
 // A specific position in source.
 message SourcePosition {
-  // The soucre location name (e.g. file name).
-  string location = 1;
+    // The soucre location name (e.g. file name).
+    string location = 1;
 
-  // The character offset.
-  int32 offset = 2;
+    // The character offset.
+    int32 offset = 2;
 
-  // The 1-based index of the starting line in the source text
-  // where the issue occurs, or 0 if unknown.
-  int32 line = 3;
+    // The 1-based index of the starting line in the source text
+    // where the issue occurs, or 0 if unknown.
+    int32 line = 3;
 
-  // The 0-based index of the starting position within the line of source text
-  // where the issue occurs.  Only meaningful if line is nonzer..
-  int32 column = 4;
+    // The 0-based index of the starting position within the line of source text
+    // where the issue occurs.  Only meaningful if line is nonzer..
+    int32 column = 4;
 }

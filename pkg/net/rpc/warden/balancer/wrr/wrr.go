@@ -36,9 +36,9 @@ func newBuilder() balancer.Builder {
 }
 
 func init() {
-	//feature.DefaultGate.Add(map[feature.Feature]feature.Spec{
+	// feature.DefaultGate.Add(map[feature.Feature]feature.Spec{
 	//	dwrrFeature: {Default: false},
-	//})
+	// })
 
 	balancer.Register(newBuilder())
 }
@@ -229,9 +229,9 @@ func (p *wrrPicker) pick(ctx context.Context, opts balancer.PickOptions) (balanc
 	if cmd, ok := nmd.FromContext(ctx); ok {
 		cmd["conn"] = conn
 	}
-	//if !feature.DefaultGate.Enabled(dwrrFeature) {
+	// if !feature.DefaultGate.Enabled(dwrrFeature) {
 	//	return conn.conn, nil, nil
-	//}
+	// }
 	return conn.conn, func(di balancer.DoneInfo) {
 		ev := int64(0) // error value ,if error set 1
 		if di.Err != nil {

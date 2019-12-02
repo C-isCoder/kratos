@@ -12,7 +12,7 @@ import (
 
 // Dao .
 type Dao struct {
-	mc            *memcache.Memcache
+	mc         *memcache.Memcache
 	demoExpire int32
 }
 
@@ -33,7 +33,7 @@ func New() (d *Dao) {
 		WriteTimeout: xtime.Duration(time.Second),
 	}
 	d = &Dao{
-		mc:            memcache.New(cfg),
+		mc:         memcache.New(cfg),
 		demoExpire: int32(5),
 	}
 	return

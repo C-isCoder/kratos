@@ -41,13 +41,13 @@ func init() {
 type testSubConn struct {
 	addr resolver.Address
 	wait chan struct{}
-	//statics
+	// statics
 	reqs      int64
 	usage     int64
 	cpu       int64
 	prevReq   int64
 	prevUsage int64
-	//control params
+	// control params
 	loadJitter  int64
 	delayJitter int64
 }
@@ -77,7 +77,7 @@ func newTestSubConn(addr string, weight uint64, color string) (sc *testSubConn) 
 
 func (s *testSubConn) connect(ctx context.Context) {
 	time.Sleep(time.Millisecond * 15)
-	//add qps counter when request come in
+	// add qps counter when request come in
 	atomic.AddInt64(&s.reqs, 1)
 	select {
 	case <-ctx.Done():
@@ -226,7 +226,7 @@ func TestChaosPick(t *testing.T) {
 }
 
 func newController(svrNum int, cliNum int) *controller {
-	//new servers
+	// new servers
 	servers := []*testSubConn{}
 	var weight uint64 = 10
 	if extraWeight > 0 {
@@ -237,7 +237,7 @@ func newController(svrNum int, cliNum int) *controller {
 		sc := newTestSubConn(fmt.Sprintf("addr_%d", i), weight, "")
 		servers = append(servers, sc)
 	}
-	//new clients
+	// new clients
 	var clients []balancer.Picker
 	scs := map[resolver.Address]balancer.SubConn{}
 	for _, v := range servers {
@@ -306,7 +306,7 @@ func (c *controller) control(extraLoad, extraDelay int64) {
 	var chaos int
 	for {
 		fmt.Printf("\n")
-		//make some chaos
+		// make some chaos
 		n := rand.Intn(3)
 		chaos = n + 1
 		for i := 0; i < chaos; i++ {
@@ -337,7 +337,7 @@ func (c *controller) control(extraLoad, extraDelay int64) {
 			p.printStats()
 		}
 		fmt.Printf("\n")
-		//reset chaos
+		// reset chaos
 		for i := 0; i < chaos; i++ {
 			atomic.StoreInt64(&c.servers[i].loadJitter, 0)
 			atomic.StoreInt64(&c.servers[i].delayJitter, 0)

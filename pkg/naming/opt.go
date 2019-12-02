@@ -44,7 +44,7 @@ func Filter(schema string, clusters map[string]struct{}) BuildOpt {
 			for zone := range inss {
 				var instances []*Instance
 				for _, ins := range inss[zone] {
-					//如果r.clusters的长度大于0说明需要进行集群选择
+					// 如果r.clusters的长度大于0说明需要进行集群选择
 					if len(clusters) > 0 {
 						if _, ok := clusters[ins.Metadata[MetaCluster]]; !ok {
 							continue
@@ -163,7 +163,7 @@ func ScheduleNode(clientZone string) BuildOpt {
 					instances = append(instances, ins)
 				}
 			}
-			//如果没有拿到节点，则选择直接获取
+			// 如果没有拿到节点，则选择直接获取
 			if len(instances) == 0 {
 				instances = app.Instances[clientZone]
 				if len(instances) == 0 {

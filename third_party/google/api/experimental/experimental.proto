@@ -29,6 +29,6 @@ option objc_class_prefix = "GAPI";
 // Experimental service configuration. These configuration options can
 // only be used by whitelisted users.
 message Experimental {
-  // Authorization configuration.
-  AuthorizationConfig authorization = 8;
+    // Authorization configuration.
+    AuthorizationConfig authorization = 8;
 }

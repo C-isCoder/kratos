@@ -27,23 +27,23 @@ option java_package = "com.google.api.expr.v1beta1";
 
 // A declaration.
 message Decl {
-  // The id of the declaration.
-  int32 id = 1;
+    // The id of the declaration.
+    int32 id = 1;
 
-  // The name of the declaration.
-  string name = 2;
+    // The name of the declaration.
+    string name = 2;
 
-  // The documentation string for the declaration.
-  string doc = 3;
+    // The documentation string for the declaration.
+    string doc = 3;
 
-  // The kind of declaration.
-  oneof kind {
-    // An identifier declaration.
-    IdentDecl ident = 4;
+    // The kind of declaration.
+    oneof kind {
+        // An identifier declaration.
+        IdentDecl ident = 4;
 
-    // A function declaration.
-    FunctionDecl function = 5;
-  }
+        // A function declaration.
+        FunctionDecl function = 5;
+    }
 }
 
 // The declared type of a variable.
@@ -51,34 +51,34 @@ message Decl {
 // Extends runtime type values with extra information used for type checking
 // and dispatching.
 message DeclType {
-  // The expression id of the declared type, if applicable.
-  int32 id = 1;
+    // The expression id of the declared type, if applicable.
+    int32 id = 1;
 
-  // The type name, e.g. 'int', 'my.type.Type' or 'T'
-  string type = 2;
+    // The type name, e.g. 'int', 'my.type.Type' or 'T'
+    string type = 2;
 
-  // An ordered list of type parameters, e.g. `<string, int>`.
-  // Only applies to a subset of types, e.g. `map`, `list`.
-  repeated DeclType type_params = 4;
+    // An ordered list of type parameters, e.g. `<string, int>`.
+    // Only applies to a subset of types, e.g. `map`, `list`.
+    repeated DeclType type_params = 4;
 }
 
 // An identifier declaration.
 message IdentDecl {
-  // Optional type of the identifier.
-  DeclType type = 3;
+    // Optional type of the identifier.
+    DeclType type = 3;
 
-  // Optional value of the identifier.
-  Expr value = 4;
+    // Optional value of the identifier.
+    Expr value = 4;
 }
 
 // A function declaration.
 message FunctionDecl {
-  // The function arguments.
-  repeated IdentDecl args = 1;
+    // The function arguments.
+    repeated IdentDecl args = 1;
 
-  // Optional declared return type.
-  DeclType return_type = 2;
+    // Optional declared return type.
+    DeclType return_type = 2;
 
-  // If the first argument of the function is the receiver.
-  bool receiver_function = 3;
+    // If the first argument of the function is the receiver.
+    bool receiver_function = 3;
 }

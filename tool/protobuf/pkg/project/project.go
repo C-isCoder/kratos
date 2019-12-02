@@ -51,11 +51,11 @@ func NewProjInfo(file string, modDirName string, modImportPath string) (projInfo
 	if !ioutil2.FileExists(protoAbs) {
 		return nil, errors.Errorf("Cannot find proto file in current dir %s, file: %s ", wd, file)
 	}
-	//appIndex := strings.Index(wd, modDirName)
-	//if appIndex == -1 {
+	// appIndex := strings.Index(wd, modDirName)
+	// if appIndex == -1 {
 	//	err = errors.New("not in " + modDirName)
 	//	return nil, err
-	//}
+	// }
 
 	projPath := LookupProjPath(protoAbs)
 

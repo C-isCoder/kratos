@@ -2,8 +2,9 @@ package zipkin
 
 import (
 	"fmt"
-	protogen "github.com/bilibili/kratos/pkg/net/trace/proto"
 	"time"
+
+	protogen "github.com/bilibili/kratos/pkg/net/trace/proto"
 
 	"github.com/bilibili/kratos/pkg/net/trace"
 	"github.com/openzipkin/zipkin-go/model"
@@ -65,7 +66,7 @@ func (r *report) WriteSpan(raw *trace.Span) (err error) {
 			}
 		}
 	}
-	//log save to zipkin annotation
+	// log save to zipkin annotation
 	span.Annotations = r.converLogsToAnnotations(raw.Logs())
 	r.rpt.Send(span)
 	return

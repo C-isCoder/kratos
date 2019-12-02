@@ -31,7 +31,7 @@ func TestZipkin(t *testing.T) {
 		Timeout:   xtime.Duration(time.Second * 5),
 		BatchSize: 100,
 	}
-	//c.Endpoint = "http://127.0.0.1:9411/api/v2/spans"
+	// c.Endpoint = "http://127.0.0.1:9411/api/v2/spans"
 	report := newReport(c)
 	t1 := trace.NewTracer("service1", report, true)
 	t2 := trace.NewTracer("service2", report, true)

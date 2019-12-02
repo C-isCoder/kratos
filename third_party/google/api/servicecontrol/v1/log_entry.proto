@@ -29,38 +29,38 @@ option java_package = "com.google.api.servicecontrol.v1";
 
 // An individual log entry.
 message LogEntry {
-  // Required. The log to which this log entry belongs. Examples: `"syslog"`,
-  // `"book_log"`.
-  string name = 10;
+    // Required. The log to which this log entry belongs. Examples: `"syslog"`,
+    // `"book_log"`.
+    string name = 10;
 
-  // The time the event described by the log entry occurred. If
-  // omitted, defaults to operation start time.
-  google.protobuf.Timestamp timestamp = 11;
+    // The time the event described by the log entry occurred. If
+    // omitted, defaults to operation start time.
+    google.protobuf.Timestamp timestamp = 11;
 
-  // The severity of the log entry. The default value is
-  // `LogSeverity.DEFAULT`.
-  google.logging.type.LogSeverity severity = 12;
+    // The severity of the log entry. The default value is
+    // `LogSeverity.DEFAULT`.
+    google.logging.type.LogSeverity severity = 12;
 
-  // A unique ID for the log entry used for deduplication. If omitted,
-  // the implementation will generate one based on operation_id.
-  string insert_id = 4;
+    // A unique ID for the log entry used for deduplication. If omitted,
+    // the implementation will generate one based on operation_id.
+    string insert_id = 4;
 
-  // A set of user-defined (key, value) data that provides additional
-  // information about the log entry.
-  map<string, string> labels = 13;
+    // A set of user-defined (key, value) data that provides additional
+    // information about the log entry.
+    map<string, string> labels = 13;
 
-  // The log entry payload, which can be one of multiple types.
-  oneof payload {
-    // The log entry payload, represented as a protocol buffer that is
-    // expressed as a JSON object. The only accepted type currently is
-    // [AuditLog][google.cloud.audit.AuditLog].
-    google.protobuf.Any proto_payload = 2;
+    // The log entry payload, which can be one of multiple types.
+    oneof payload {
+        // The log entry payload, represented as a protocol buffer that is
+        // expressed as a JSON object. The only accepted type currently is
+        // [AuditLog][google.cloud.audit.AuditLog].
+        google.protobuf.Any proto_payload = 2;
 
-    // The log entry payload, represented as a Unicode string (UTF-8).
-    string text_payload = 3;
+        // The log entry payload, represented as a Unicode string (UTF-8).
+        string text_payload = 3;
 
-    // The log entry payload, represented as a structure that
-    // is expressed as a JSON object.
-    google.protobuf.Struct struct_payload = 6;
-  }
+        // The log entry payload, represented as a structure that
+        // is expressed as a JSON object.
+        google.protobuf.Struct struct_payload = 6;
+    }
 }

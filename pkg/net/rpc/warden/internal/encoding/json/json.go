@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/encoding"
 )
 
-//Reference https://jbrandhorst.com/post/grpc-json/
+// Reference https://jbrandhorst.com/post/grpc-json/
 func init() {
 	encoding.RegisterCodec(JSON{
 		Marshaler: jsonpb.Marshaler{

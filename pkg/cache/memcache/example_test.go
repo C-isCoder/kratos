@@ -172,6 +172,6 @@ func ExampleConn_getMulti() {
 		fmt.Println(p)
 	}
 	// Output:
-	//{golang 10}
-	//{golang 10}
+	// {golang 10}
+	// {golang 10}
 }

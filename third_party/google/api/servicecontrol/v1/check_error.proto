@@ -27,72 +27,72 @@ option java_package = "com.google.api.servicecontrol.v1";
 // Defines the errors to be returned in
 // [google.api.servicecontrol.v1.CheckResponse.check_errors][google.api.servicecontrol.v1.CheckResponse.check_errors].
 message CheckError {
-  // Error codes for Check responses.
-  enum Code {
-    // This is never used in `CheckResponse`.
-    ERROR_CODE_UNSPECIFIED = 0;
+    // Error codes for Check responses.
+    enum Code {
+        // This is never used in `CheckResponse`.
+        ERROR_CODE_UNSPECIFIED = 0;
 
-    // The consumer's project id was not found.
-    // Same as [google.rpc.Code.NOT_FOUND][].
-    NOT_FOUND = 5;
+        // The consumer's project id was not found.
+        // Same as [google.rpc.Code.NOT_FOUND][].
+        NOT_FOUND = 5;
 
-    // The consumer doesn't have access to the specified resource.
-    // Same as [google.rpc.Code.PERMISSION_DENIED][].
-    PERMISSION_DENIED = 7;
+        // The consumer doesn't have access to the specified resource.
+        // Same as [google.rpc.Code.PERMISSION_DENIED][].
+        PERMISSION_DENIED = 7;
 
-    // Quota check failed. Same as [google.rpc.Code.RESOURCE_EXHAUSTED][].
-    RESOURCE_EXHAUSTED = 8;
+        // Quota check failed. Same as [google.rpc.Code.RESOURCE_EXHAUSTED][].
+        RESOURCE_EXHAUSTED = 8;
 
-    // The consumer hasn't activated the service.
-    SERVICE_NOT_ACTIVATED = 104;
+        // The consumer hasn't activated the service.
+        SERVICE_NOT_ACTIVATED = 104;
 
-    // The consumer cannot access the service because billing is disabled.
-    BILLING_DISABLED = 107;
+        // The consumer cannot access the service because billing is disabled.
+        BILLING_DISABLED = 107;
 
-    // The consumer's project has been marked as deleted (soft deletion).
-    PROJECT_DELETED = 108;
+        // The consumer's project has been marked as deleted (soft deletion).
+        PROJECT_DELETED = 108;
 
-    // The consumer's project number or id does not represent a valid project.
-    PROJECT_INVALID = 114;
+        // The consumer's project number or id does not represent a valid project.
+        PROJECT_INVALID = 114;
 
-    // The IP address of the consumer is invalid for the specific consumer
-    // project.
-    IP_ADDRESS_BLOCKED = 109;
+        // The IP address of the consumer is invalid for the specific consumer
+        // project.
+        IP_ADDRESS_BLOCKED = 109;
 
-    // The referer address of the consumer request is invalid for the specific
-    // consumer project.
-    REFERER_BLOCKED = 110;
+        // The referer address of the consumer request is invalid for the specific
+        // consumer project.
+        REFERER_BLOCKED = 110;
 
-    // The client application of the consumer request is invalid for the
-    // specific consumer project.
-    CLIENT_APP_BLOCKED = 111;
+        // The client application of the consumer request is invalid for the
+        // specific consumer project.
+        CLIENT_APP_BLOCKED = 111;
 
-    // The API targeted by this request is invalid for the specified consumer
-    // project.
-    API_TARGET_BLOCKED = 122;
+        // The API targeted by this request is invalid for the specified consumer
+        // project.
+        API_TARGET_BLOCKED = 122;
 
-    // The consumer's API key is invalid.
-    API_KEY_INVALID = 105;
+        // The consumer's API key is invalid.
+        API_KEY_INVALID = 105;
 
-    // The consumer's API Key has expired.
-    API_KEY_EXPIRED = 112;
+        // The consumer's API Key has expired.
+        API_KEY_EXPIRED = 112;
 
-    // The consumer's API Key was not found in config record.
-    API_KEY_NOT_FOUND = 113;
+        // The consumer's API Key was not found in config record.
+        API_KEY_NOT_FOUND = 113;
 
-    // The backend server for looking up project id/number is unavailable.
-    NAMESPACE_LOOKUP_UNAVAILABLE = 300;
+        // The backend server for looking up project id/number is unavailable.
+        NAMESPACE_LOOKUP_UNAVAILABLE = 300;
 
-    // The backend server for checking service status is unavailable.
-    SERVICE_STATUS_UNAVAILABLE = 301;
+        // The backend server for checking service status is unavailable.
+        SERVICE_STATUS_UNAVAILABLE = 301;
 
-    // The backend server for checking billing status is unavailable.
-    BILLING_STATUS_UNAVAILABLE = 302;
-  }
+        // The backend server for checking billing status is unavailable.
+        BILLING_STATUS_UNAVAILABLE = 302;
+    }
 
-  // The error code.
-  Code code = 1;
+    // The error code.
+    Code code = 1;
 
-  // Free-form text providing details on the error cause of the error.
-  string detail = 2;
+    // Free-form text providing details on the error cause of the error.
+    string detail = 2;
 }

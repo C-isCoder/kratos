@@ -50,7 +50,7 @@ func (s *helloServer) StreamHello(ss pb.Greeter_StreamHelloServer) error {
 
 func runServer(addr string) *warden.Server {
 	server := warden.NewServer(&warden.ServerConfig{
-		//服务端每个请求的默认超时时间
+		// 服务端每个请求的默认超时时间
 		Timeout: xtime.Duration(time.Second),
 	})
 	server.Use(middleware())
@@ -70,12 +70,12 @@ func main() {
 	signalHandler(server)
 }
 
-//类似于中间件
+// 类似于中间件
 func middleware() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		//记录调用方法
+		// 记录调用方法
 		log.Info("method:%s", info.FullMethod)
-		//call chain
+		// call chain
 		resp, err = handler(ctx, req)
 		return
 	}
@@ -93,7 +93,7 @@ func signalHandler(s *warden.Server) {
 			log.Info("get a signal %s, stop the consume process", si.String())
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 			defer cancel()
-			//gracefully shutdown with timeout
+			// gracefully shutdown with timeout
 			s.Shutdown(ctx)
 			return
 		case syscall.SIGHUP:

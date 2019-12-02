@@ -17,7 +17,7 @@ import (
 	"github.com/bilibili/kratos/pkg/net/trace"
 	xtime "github.com/bilibili/kratos/pkg/time"
 
-	//this package is for json format response
+	// this package is for json format response
 	_ "github.com/bilibili/kratos/pkg/net/rpc/warden/internal/encoding/json"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden/internal/status"
 

@@ -155,7 +155,7 @@ func TestPoolCompareAndSwap(t *testing.T) {
 	conn := testPool.Get(context.Background())
 	defer conn.Close()
 	key := "testpool"
-	//cas
+	// cas
 	if r, err := conn.Get(key); err != nil {
 		t.Errorf("conn.Get() error(%v)", err)
 	} else {

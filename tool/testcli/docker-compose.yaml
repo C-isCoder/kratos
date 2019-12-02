@@ -4,12 +4,12 @@ services:
   db:
     image: mysql:5.6
     ports:
-    - 3306:3306
+      - 3306:3306
     environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=root
+      - TZ=Asia/Shanghai
     volumes:
-    - .:/docker-entrypoint-initdb.d
+      - .:/docker-entrypoint-initdb.d
     command: [
       '--character-set-server=utf8',
       '--collation-server=utf8_unicode_ci'

@@ -52,16 +52,16 @@ type subConn struct {
 	addr resolver.Address
 	meta wmd.MD
 
-	//client statistic data
+	// client statistic data
 	lag      uint64
 	success  uint64
 	inflight int64
 	// server statistic data
 	svrCPU uint64
 
-	//last collected timestamp
+	// last collected timestamp
 	stamp int64
-	//last pick timestamp
+	// last pick timestamp
 	pick int64
 	// request number in a period time
 	reqs int64
@@ -289,5 +289,5 @@ func (p *p2cPicker) printStats() {
 		stats = append(stats, stat)
 	}
 	log.Info("p2c %s : %+v", p.subConns[0].addr.ServerName, stats)
-	//fmt.Printf("%+v\n", stats)
+	// fmt.Printf("%+v\n", stats)
 }

@@ -103,7 +103,7 @@ func TestASCIIConnGet(t *testing.T) {
 	}
 }
 
-//func TestGetHasErr(t *testing.T) {
+// func TestGetHasErr(t *testing.T) {
 //	prepareEnv(t)
 //
 //	st := &TestItem{Name: "json", Age: 10}
@@ -121,7 +121,7 @@ func TestASCIIConnGet(t *testing.T) {
 //	if err := c.(*asciiConn).err; err.Error() != expected.Error() {
 //		t.Errorf("unexpected error(%v)", err)
 //	}
-//}
+// }
 
 func TestASCIIConnGetMulti(t *testing.T) {
 	tests := []struct {

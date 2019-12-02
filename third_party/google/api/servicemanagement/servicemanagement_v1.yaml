@@ -4,15 +4,15 @@ name: servicemanagement.googleapis.com
 title: Google Service Management API
 
 apis:
-- name: google.api.servicemanagement.v1.ServiceManager
+  - name: google.api.servicemanagement.v1.ServiceManager
 
 types:
-- name: google.api.servicemanagement.v1.ConfigSource
-- name: google.api.servicemanagement.v1.ConfigRef
-- name: google.api.servicemanagement.v1.OperationMetadata
-- name: google.api.servicemanagement.v1.Rollout
-- name: google.api.servicemanagement.v1.SubmitConfigSourceResponse
-- name: google.api.servicemanagement.v1.UndeleteServiceResponse
+  - name: google.api.servicemanagement.v1.ConfigSource
+  - name: google.api.servicemanagement.v1.ConfigRef
+  - name: google.api.servicemanagement.v1.OperationMetadata
+  - name: google.api.servicemanagement.v1.Rollout
+  - name: google.api.servicemanagement.v1.SubmitConfigSourceResponse
+  - name: google.api.servicemanagement.v1.UndeleteServiceResponse
 
 documentation:
   summary: |-
@@ -129,105 +129,105 @@ documentation:
     initiating a new `Rollout` that clones a previously submitted rollout
     record.
   rules:
-  - selector: google.longrunning.Operations.ListOperations
-    description: Lists service operations that match the specified filter in the request.
+    - selector: google.longrunning.Operations.ListOperations
+      description: Lists service operations that match the specified filter in the request.
 
 backend:
   rules:
-  - selector: google.longrunning.Operations.ListOperations
-    deadline: 10.0
-  - selector: google.longrunning.Operations.GetOperation
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.ListServices
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.GetService
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.CreateService
-    deadline: 20.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.DeleteService
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.UndeleteService
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.ListServiceConfigs
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.GetServiceConfig
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.CreateServiceConfig
-    deadline: 20.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.SubmitConfigSource
-    deadline: 20.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.ListServiceRollouts
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.GetServiceRollout
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.CreateServiceRollout
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.GenerateConfigReport
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.EnableService
-    deadline: 10.0
-  - selector: google.api.servicemanagement.v1.ServiceManager.DisableService
-    deadline: 10.0
-  - selector: google.iam.v1.IAMPolicy.SetIamPolicy
-    deadline: 10.0
-  - selector: google.iam.v1.IAMPolicy.GetIamPolicy
-    deadline: 10.0
-  - selector: google.iam.v1.IAMPolicy.TestIamPermissions
-    deadline: 10.0
+    - selector: google.longrunning.Operations.ListOperations
+      deadline: 10.0
+    - selector: google.longrunning.Operations.GetOperation
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.ListServices
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.GetService
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.CreateService
+      deadline: 20.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.DeleteService
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.UndeleteService
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.ListServiceConfigs
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.GetServiceConfig
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.CreateServiceConfig
+      deadline: 20.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.SubmitConfigSource
+      deadline: 20.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.ListServiceRollouts
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.GetServiceRollout
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.CreateServiceRollout
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.GenerateConfigReport
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.EnableService
+      deadline: 10.0
+    - selector: google.api.servicemanagement.v1.ServiceManager.DisableService
+      deadline: 10.0
+    - selector: google.iam.v1.IAMPolicy.SetIamPolicy
+      deadline: 10.0
+    - selector: google.iam.v1.IAMPolicy.GetIamPolicy
+      deadline: 10.0
+    - selector: google.iam.v1.IAMPolicy.TestIamPermissions
+      deadline: 10.0
 
 http:
   rules:
-  - selector: google.longrunning.Operations.ListOperations
-    get: /v1/operations
+    - selector: google.longrunning.Operations.ListOperations
+      get: /v1/operations
 
-  - selector: google.iam.v1.IAMPolicy.SetIamPolicy
-    post: '/v1/{resource=services/*}:setIamPolicy'
-    body: '*'
-    additional_bindings:
-    - post: '/v1/{resource=services/*/consumers/*}:setIamPolicy'
+    - selector: google.iam.v1.IAMPolicy.SetIamPolicy
+      post: '/v1/{resource=services/*}:setIamPolicy'
       body: '*'
+      additional_bindings:
+        - post: '/v1/{resource=services/*/consumers/*}:setIamPolicy'
+          body: '*'
 
-  - selector: google.iam.v1.IAMPolicy.GetIamPolicy
-    post: '/v1/{resource=services/*}:getIamPolicy'
-    body: '*'
-    additional_bindings:
-    - post: '/v1/{resource=services/*/consumers/*}:getIamPolicy'
+    - selector: google.iam.v1.IAMPolicy.GetIamPolicy
+      post: '/v1/{resource=services/*}:getIamPolicy'
       body: '*'
+      additional_bindings:
+        - post: '/v1/{resource=services/*/consumers/*}:getIamPolicy'
+          body: '*'
 
-  - selector: google.iam.v1.IAMPolicy.TestIamPermissions
-    post: '/v1/{resource=services/*}:testIamPermissions'
-    body: '*'
-    additional_bindings:
-    - post: '/v1/{resource=services/*/consumers/*}:testIamPermissions'
+    - selector: google.iam.v1.IAMPolicy.TestIamPermissions
+      post: '/v1/{resource=services/*}:testIamPermissions'
       body: '*'
+      additional_bindings:
+        - post: '/v1/{resource=services/*/consumers/*}:testIamPermissions'
+          body: '*'
 
 
 authentication:
   rules:
-  - selector: '*'
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/cloud-platform,
-        https://www.googleapis.com/auth/service.management
-  - selector: |-
-      google.api.servicemanagement.v1.ServiceManager.GetService,
-      google.api.servicemanagement.v1.ServiceManager.GetServiceConfig,
-      google.api.servicemanagement.v1.ServiceManager.GetServiceRollout,
-      google.api.servicemanagement.v1.ServiceManager.ListServiceConfigs,
-      google.api.servicemanagement.v1.ServiceManager.ListServiceRollouts,
-      google.api.servicemanagement.v1.ServiceManager.ListServices
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/cloud-platform,
-        https://www.googleapis.com/auth/cloud-platform.read-only,
-        https://www.googleapis.com/auth/service.management,
-        https://www.googleapis.com/auth/service.management.readonly
-  - selector: |-
-      google.iam.v1.IAMPolicy.GetIamPolicy,
-      google.iam.v1.IAMPolicy.TestIamPermissions
-    oauth:
-      canonical_scopes: |-
-        https://www.googleapis.com/auth/cloud-platform,
-        https://www.googleapis.com/auth/cloud-platform.read-only,
-        https://www.googleapis.com/auth/service.management,
-        https://www.googleapis.com/auth/service.management.readonly
+    - selector: '*'
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/service.management
+    - selector: |-
+        google.api.servicemanagement.v1.ServiceManager.GetService,
+        google.api.servicemanagement.v1.ServiceManager.GetServiceConfig,
+        google.api.servicemanagement.v1.ServiceManager.GetServiceRollout,
+        google.api.servicemanagement.v1.ServiceManager.ListServiceConfigs,
+        google.api.servicemanagement.v1.ServiceManager.ListServiceRollouts,
+        google.api.servicemanagement.v1.ServiceManager.ListServices
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-platform.read-only,
+          https://www.googleapis.com/auth/service.management,
+          https://www.googleapis.com/auth/service.management.readonly
+    - selector: |-
+        google.iam.v1.IAMPolicy.GetIamPolicy,
+        google.iam.v1.IAMPolicy.TestIamPermissions
+      oauth:
+        canonical_scopes: |-
+          https://www.googleapis.com/auth/cloud-platform,
+          https://www.googleapis.com/auth/cloud-platform.read-only,
+          https://www.googleapis.com/auth/service.management,
+          https://www.googleapis.com/auth/service.management.readonly

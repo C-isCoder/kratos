@@ -14,7 +14,7 @@ import (
 // Mobile user-agent format "{platform};{device};{os_version};{app_version}"
 // eg "User-Agent":"iOS;iPhone;12.6.1;1.0.0"
 var (
-	//_session       = "SESSION"
+	// _session       = "SESSION"
 	_authorization = "Authorization"
 	_secret        = "JWT_SECRET"
 	_bearer        = "Bearer "

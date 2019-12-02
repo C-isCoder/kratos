@@ -11,8 +11,9 @@ option (gogoproto.marshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
 service Hello {
-  // Sends a greeting
-  rpc Say (BenchmarkMessage) returns (BenchmarkMessage) {}
+    // Sends a greeting
+    rpc Say (BenchmarkMessage) returns (BenchmarkMessage) {
+    }
 }
 
 
@@ -49,8 +50,8 @@ message BenchmarkMessage {
     int32 field272 = 272;
     int32 field150 = 150;
     int32 field23 = 23;
-    bool field24 = 24 ;
-    int32 field25 = 25 ;
+    bool field24 = 24;
+    int32 field25 = 25;
     bool field78 = 78;
     int32 field67 = 67;
     int32 field68 = 68;
