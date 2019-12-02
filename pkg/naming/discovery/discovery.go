@@ -391,7 +391,7 @@ func (d *Discovery) register(ctx context.Context, ins *naming.Instance) (err err
 		params.Set("status", strconv.FormatInt(ins.Status, 10))
 	}
 	params.Set("metadata", string(metadata))
-	if err = d.httpClient.Post(ctx, uri, "", params, &res); err != nil {
+	if err = d.httpClient.Post(ctx, uri, /*"", */params, &res); err != nil {
 		d.switchNode()
 		log.Error("discovery: register client.Get(%v)  zone(%s) env(%s) appid(%s) addrs(%v) error(%v)",
 			uri, c.Zone, c.Env, ins.AppID, ins.Addrs, err)
@@ -419,7 +419,7 @@ func (d *Discovery) renew(ctx context.Context, ins *naming.Instance) (err error)
 	uri := fmt.Sprintf(_renewURL, d.pickNode())
 	params := d.newParams(c)
 	params.Set("appid", ins.AppID)
-	if err = d.httpClient.Post(ctx, uri, "", params, &res); err != nil {
+	if err = d.httpClient.Post(ctx, uri, /*"", */params, &res); err != nil {
 		d.switchNode()
 		log.Error("discovery: renew client.Get(%v)  env(%s) appid(%s) hostname(%s) error(%v)",
 			uri, c.Env, ins.AppID, c.Host, err)
@@ -451,7 +451,7 @@ func (d *Discovery) cancel(ins *naming.Instance) (err error) {
 	params := d.newParams(c)
 	params.Set("appid", ins.AppID)
 	// request
-	if err = d.httpClient.Post(context.TODO(), uri, "", params, &res); err != nil {
+	if err = d.httpClient.Post(context.TODO(), uri, /*"", */ params, &res); err != nil {
 		d.switchNode()
 		log.Error("discovery cancel client.Get(%v) env(%s) appid(%s) hostname(%s) error(%v)",
 			uri, c.Env, ins.AppID, c.Host, err)
@@ -495,7 +495,7 @@ func (d *Discovery) set(ctx context.Context, ins *naming.Instance) (err error) {
 		}
 		params.Set("metadata", string(metadata))
 	}
-	if err = d.httpClient.Post(ctx, uri, "", params, &res); err != nil {
+	if err = d.httpClient.Post(ctx, uri, /*"", */ params, &res); err != nil {
 		d.switchNode()
 		log.Error("discovery: set client.Get(%v)  zone(%s) env(%s) appid(%s) addrs(%v) error(%v)",
 			uri, conf.Zone, conf.Env, ins.AppID, ins.Addrs, err)
@@ -599,7 +599,7 @@ func (d *Discovery) polls(ctx context.Context) (apps map[string]*naming.Instance
 	for _, ts := range lastTss {
 		params.Add("latest_timestamp", strconv.FormatInt(ts, 10))
 	}
-	if err = d.httpClient.Get(ctx, uri, "", params, res); err != nil {
+	if err = d.httpClient.Get(ctx, uri, /*"",*/ params, res); err != nil {
 		d.switchNode()
 		log.Error("discovery: client.Get(%s) error(%+v)", uri+"?"+params.Encode(), err)
 		return

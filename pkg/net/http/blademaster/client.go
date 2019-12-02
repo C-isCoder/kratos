@@ -133,7 +133,7 @@ func (client *Client) SetConfig(c *ClientConfig) {
 
 // NewRequest new http request with method, uri, ip, values and headers.
 // TODO(zhoujiahui): param realIP should be removed later.
-func (client *Client) NewRequest(method, uri, realIP string, params url.Values) (req *xhttp.Request, err error) {
+func (client *Client) NewRequest(method, uri string, /* realIP string,*/ params url.Values) (req *xhttp.Request, err error) {
 	if method == xhttp.MethodGet {
 		req, err = xhttp.NewRequest(xhttp.MethodGet, fmt.Sprintf("%s?%s", uri, params.Encode()), nil)
 	} else {
@@ -151,16 +151,16 @@ func (client *Client) NewRequest(method, uri, realIP string, params url.Values) 
 	if method == xhttp.MethodPost {
 		req.Header.Set(_contentType, _urlencoded)
 	}
-	if realIP != "" {
+	/*if realIP != "" {
 		req.Header.Set(_httpHeaderRemoteIP, realIP)
-	}
+	}*/
 	req.Header.Set(_userAgent, _noKickUserAgent+" "+env.AppID)
 	return
 }
 
 // Get issues a GET to the specified URL.
-func (client *Client) Get(c context.Context, uri, ip string, params url.Values, res interface{}) (err error) {
-	req, err := client.NewRequest(xhttp.MethodGet, uri, ip, params)
+func (client *Client) Get(c context.Context, uri string, /* ip string,*/ params url.Values, res interface{}) (err error) {
+	req, err := client.NewRequest(xhttp.MethodGet, uri,/* ip, */params)
 	if err != nil {
 		return
 	}
@@ -168,8 +168,8 @@ func (client *Client) Get(c context.Context, uri, ip string, params url.Values, 
 }
 
 // Post issues a Post to the specified URL.
-func (client *Client) Post(c context.Context, uri, ip string, params url.Values, res interface{}) (err error) {
-	req, err := client.NewRequest(xhttp.MethodPost, uri, ip, params)
+func (client *Client) Post(c context.Context, uri string, /*ip string, */params url.Values, res interface{}) (err error) {
+	req, err := client.NewRequest(xhttp.MethodPost, uri, /* ip,*/ params)
 	if err != nil {
 		return
 	}
@@ -177,8 +177,8 @@ func (client *Client) Post(c context.Context, uri, ip string, params url.Values,
 }
 
 // RESTfulGet issues a RESTful GET to the specified URL.
-func (client *Client) RESTfulGet(c context.Context, uri, ip string, params url.Values, res interface{}, v ...interface{}) (err error) {
-	req, err := client.NewRequest(xhttp.MethodGet, fmt.Sprintf(uri, v...), ip, params)
+func (client *Client) RESTfulGet(c context.Context, uri string,/* ip string, */params url.Values, res interface{}, v ...interface{}) (err error) {
+	req, err := client.NewRequest(xhttp.MethodGet, fmt.Sprintf(uri, v...),/* ip, */params)
 	if err != nil {
 		return
 	}
@@ -186,8 +186,8 @@ func (client *Client) RESTfulGet(c context.Context, uri, ip string, params url.V
 }
 
 // RESTfulPost issues a RESTful Post to the specified URL.
-func (client *Client) RESTfulPost(c context.Context, uri, ip string, params url.Values, res interface{}, v ...interface{}) (err error) {
-	req, err := client.NewRequest(xhttp.MethodPost, fmt.Sprintf(uri, v...), ip, params)
+func (client *Client) RESTfulPost(c context.Context, uri string, /*ip string,*/ params url.Values, res interface{}, v ...interface{}) (err error) {
+	req, err := client.NewRequest(xhttp.MethodPost, fmt.Sprintf(uri, v...), /* ip,*/ params)
 	if err != nil {
 		return
 	}
