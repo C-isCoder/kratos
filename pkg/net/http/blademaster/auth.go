@@ -1,6 +1,7 @@
 package blademaster
 
 import (
+	"net/http"
 	"os"
 	"time"
 
@@ -60,7 +61,7 @@ func Auth() HandlerFunc {
 				noAuth = true
 			}
 		}
-		if noAuth {
+		if noAuth || c.Request.Method == http.MethodOptions {
 			c.Next()
 			return
 		}

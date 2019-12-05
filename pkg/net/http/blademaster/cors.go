@@ -76,7 +76,7 @@ func (c *CORSConfig) Validate() error {
 // CORS returns the location middleware with default configuration.
 func CORS(allowOriginHosts []string) HandlerFunc {
 	config := &CORSConfig{
-		AllowMethods:     []string{"GET", "POST"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodOptions, http.MethodDelete, http.MethodPatch},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		AllowCredentials: true,
 		MaxAge:           time.Duration(0),
