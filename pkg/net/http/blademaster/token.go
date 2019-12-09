@@ -103,18 +103,15 @@ func (jwt JWT) String() string {
 func verifyToken(secret, token string) (p *payload, err error) {
 	jwt := JWT(token)
 	if jwt == "null" || jwt == "" || !strings.Contains(token, _bearer) {
-		err = _failTokenError
-		return
+		return nil, _failTokenError
 	}
 	h, p, sec256 := jwt.parse()
 	if now() > p.Exp {
-		err = _expiredTokenError
-		return
+		return nil, _expiredTokenError
 	}
 	_, _, sec := hs265(secret, h.string(), p.string())
 	if sec256 != sec {
-		err = _changeTokenError
-		return
+		return nil, _changeTokenError
 	}
 	return
 }
