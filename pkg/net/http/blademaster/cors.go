@@ -77,7 +77,7 @@ func (c *CORSConfig) Validate() error {
 func CORS(allowOriginHosts []string) HandlerFunc {
 	config := &CORSConfig{
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization","X-Requested-With"},
 		AllowCredentials: true,
 		MaxAge:           time.Duration(0),
 		AllowOriginFunc: func(origin string) bool {
