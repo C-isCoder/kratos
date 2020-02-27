@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"github.com/urfave/cli"
 	"os"
 	"strings"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 var appHelpTemplate = `{{if .Usage}}{{.Usage}}{{end}}
 
 USAGE:
-   {{if .UsageText}}{{.UsageText}}{{else}}{{.HelpName}} {{if .VisibleFlags}}[global options]{{end}}{{if .Commands}} command [command options]{{end}} {{if .ArgsUsage}}{{.ArgsUsage}}{{else}}[arguments...]{{end}}{{end}}{{if .Version}}{{if not .HideVersion}}
+   kratos new {{if .UsageText}}{{.UsageText}}{{else}}{{.HelpName}} {{if .VisibleFlags}}[global options]{{end}}{{if .Commands}} command [command options]{{end}} {{if .ArgsUsage}}{{.ArgsUsage}}{{else}}[arguments...]{{end}}{{end}}{{if .Version}}{{if not .HideVersion}}
 
 VERSION:
    {{.Version}}{{end}}{{end}}{{if .Description}}
@@ -35,27 +35,27 @@ func main() {
 	app := cli.NewApp()
 	app.Name = ""
 	app.Usage = "kratos 新项目创建工具"
-	app.UsageText = "name [options]"
+	app.UsageText = "项目名 [options]"
 	app.HideVersion = true
 	app.CustomAppHelpTemplate = appHelpTemplate
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:        "d",
 			Value:       "",
 			Usage:       "指定项目所在目录",
 			Destination: &p.path,
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:        "http",
 			Usage:       "只使用http 不使用grpc",
 			Destination: &p.onlyHTTP,
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:        "grpc",
 			Usage:       "只使用grpc 不使用http",
 			Destination: &p.onlyGRPC,
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:        "proto",
 			Usage:       "废弃参数 无作用",
 			Destination: &p.none,
@@ -63,8 +63,8 @@ func main() {
 		},
 	}
 	if len(os.Args) < 2 || strings.HasPrefix(os.Args[1], "-") {
-		fmt.Fprintf(os.Stderr, "未填写项目名称\n")
-		os.Exit(-1)
+		app.Run([]string{"-h"})
+		return
 	}
 	p.Name = os.Args[1]
 	app.Action = runNew
