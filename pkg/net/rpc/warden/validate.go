@@ -3,7 +3,7 @@ package warden
 import (
 	"context"
 
-	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/go-kratos/kratos/pkg/ecode"
 
 	"google.golang.org/grpc"
 	"gopkg.in/go-playground/validator.v9"
@@ -28,4 +28,9 @@ func (s *Server) validate() grpc.UnaryServerInterceptor {
 // NOTE: this method is not thread-safe it is intended that these all be registered prior to any validation
 func (s *Server) RegisterValidation(key string, fn validator.Func) error {
 	return validate.RegisterValidation(key, fn)
+}
+
+//GetValidate return the default validate
+func (s *Server) GetValidate() *validator.Validate {
+	return validate
 }

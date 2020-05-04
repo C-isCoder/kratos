@@ -17,9 +17,10 @@ import (
 )
 
 const (
-	toolDoc = "https://github.com/bilibili/kratos/blob/master/doc/wiki-cn/kratos-tool.md"
+	toolDoc = "https://github.com/go-kratos/kratos/blob/master/doc/wiki-cn/kratos-tool.md"
 )
 
+// Tool is kratos tool.
 type Tool struct {
 	Name         string    `json:"name"`
 	Alias        string    `json:"alias"`
@@ -180,6 +181,9 @@ func (t Tool) toolPath() string {
 		name = t.Name
 	}
 	gobin := Getenv("GOBIN")
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
 	if gobin != "" {
 		return filepath.Join(gobin, name)
 	}

@@ -13,7 +13,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -27,7 +27,7 @@ func protocAction(ctx *cli.Context) (err error) {
 	if err = checkProtoc(); err != nil {
 		return err
 	}
-	files := []string(ctx.Args())
+	files := ctx.Args().Slice()
 	if len(files) == 0 {
 		files, _ = filepath.Glob("*.proto")
 	}
@@ -130,11 +130,15 @@ func goget(url string) error {
 
 func latestKratos() (string, error) {
 	gopath := gopath()
-	ext := path.Join(gopath, "src/github.com/bilibili/kratos/third_party")
+	ext := path.Join(gopath, "src/github.com/go-kratos/kratos/third_party")
 	if _, err := os.Stat(ext); !os.IsNotExist(err) {
 		return ext, nil
 	}
-	baseMod := path.Join(gopath, "pkg/mod/github.com/bilibili")
+	ext = path.Join(gopath, "src/kratos/third_party")
+	if _, err := os.Stat(ext); !os.IsNotExist(err) {
+		return ext, nil
+	}
+	baseMod := path.Join(gopath, "pkg/mod/github.com/go-kratos")
 	files, err := ioutil.ReadDir(baseMod)
 	if err != nil {
 		return "", err

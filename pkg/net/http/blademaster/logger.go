@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bilibili/kratos/pkg/ecode"
-	"github.com/bilibili/kratos/pkg/log"
-	"github.com/bilibili/kratos/pkg/net/metadata"
+	"github.com/go-kratos/kratos/pkg/ecode"
+	"github.com/go-kratos/kratos/pkg/log"
+	"github.com/go-kratos/kratos/pkg/net/metadata"
 )
 
 // Logger is logger  middleware
@@ -15,7 +15,6 @@ func Logger() HandlerFunc {
 	const noUser = "no_user"
 	return func(c *Context) {
 		now := time.Now()
-		ip := metadata.String(c, metadata.RemoteIP)
 		req := c.Request
 		path := req.URL.Path
 		params := req.Form
@@ -63,7 +62,7 @@ func Logger() HandlerFunc {
 
 		lf(c,
 			log.KVString("method", req.Method),
-			log.KVString("ip", ip),
+			log.KVString("ip", c.RemoteIP()),
 			log.KVString("user", caller),
 			log.KVString("path", path),
 			log.KVString("params", params.Encode()),

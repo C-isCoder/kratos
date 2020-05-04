@@ -1,0 +1,61 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Set up Env
+      run: |
+        echo "::set-env name=GOPATH::$(go env GOPATH)"
+        echo "::add-path::$(go env GOPATH)/bin"
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+        sudo rm /usr/local/bin/docker-compose
+        curl -L https://github.com/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m` > docker-compose
+        chmod +x docker-compose
+        sudo mv docker-compose /usr/local/bin
+        wget https://github.com/google/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
+        unzip protoc-3.11.4-linux-x86_64.zip
+        chmod +x bin/protoc
+        sudo mv bin/protoc /usr/local/bin
+        sudo mv include /usr/local/bin
+        go get -u github.com/golang/protobuf/protoc-gen-go
+        go get -u github.com/gogo/protobuf/protoc-gen-gofast
+
+    - name: Build
+      run: go build ./...
+    - name: Test
+      run: go test ./...
+    - name: Tool
+      run: |
+        go install ./...
+        mkdir -p $GOPATH/src
+        cp -R ../kratos $GOPATH/src
+        cd $GOPATH/src
+        kratos new kratos-demo
+        cd kratos-demo
+        go build ./...

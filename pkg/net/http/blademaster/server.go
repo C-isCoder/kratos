@@ -13,12 +13,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/bilibili/kratos/pkg/conf/dsn"
-	"github.com/bilibili/kratos/pkg/log"
-	"github.com/bilibili/kratos/pkg/net/criticality"
-	"github.com/bilibili/kratos/pkg/net/ip"
-	"github.com/bilibili/kratos/pkg/net/metadata"
-	xtime "github.com/bilibili/kratos/pkg/time"
+	"github.com/go-kratos/kratos/pkg/conf/dsn"
+	"github.com/go-kratos/kratos/pkg/log"
+	"github.com/go-kratos/kratos/pkg/net/criticality"
+	"github.com/go-kratos/kratos/pkg/net/ip"
+	"github.com/go-kratos/kratos/pkg/net/metadata"
+	xtime "github.com/go-kratos/kratos/pkg/time"
 
 	"github.com/pkg/errors"
 )
@@ -91,11 +91,10 @@ func (engine *Engine) Start() error {
 	conf := engine.conf
 	l, err := net.Listen(conf.Network, conf.Addr)
 	if err != nil {
-		errors.Wrapf(err, "blademaster: listen tcp: %s", conf.Addr)
-		return err
+		return errors.Wrapf(err, "blademaster: listen tcp: %s", conf.Addr)
 	}
 
-	log.Info("blademaster: start http listen addr: %s", conf.Addr)
+	log.Info("blademaster: start http listen addr: %s", l.Addr().String())
 	server := &http.Server{
 		ReadTimeout:  time.Duration(conf.ReadTimeout),
 		WriteTimeout: time.Duration(conf.WriteTimeout),
@@ -152,6 +151,8 @@ type Engine struct {
 	allNoMethod []HandlerFunc
 	noRoute     []HandlerFunc
 	noMethod    []HandlerFunc
+
+	pool sync.Pool
 }
 
 type injection struct {
@@ -182,6 +183,9 @@ func NewServer(conf *ServerConfig) *Engine {
 	}
 	if err := engine.SetConfig(conf); err != nil {
 		panic(err)
+	}
+	engine.pool.New = func() interface{} {
+		return engine.newContext()
 	}
 	engine.RouterGroup.engine = engine
 	// NOTE add prometheus monitor location
@@ -245,8 +249,8 @@ func (engine *Engine) prepareHandler(c *Context) {
 	httpMethod := c.Request.Method
 	rPath := c.Request.URL.Path
 	unescape := false
-	if engine.UseRawPath && len(c.Request.URL.RawPath) > 0 {
-		rPath = c.Request.URL.RawPath
+	if engine.UseRawPath && len(c.Request.URL.EscapedPath()) > 0 {
+		rPath = c.Request.URL.EscapedPath()
 		unescape = engine.UnescapePathValues
 	}
 	rPath = cleanPath(rPath)
@@ -478,20 +482,18 @@ func (engine *Engine) Inject(pattern string, handlers ...HandlerFunc) {
 
 // ServeHTTP conforms to the http.Handler interface.
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	c := &Context{
-		Context:  nil,
-		engine:   engine,
-		index:    -1,
-		handlers: nil,
-		Keys:     nil,
-		method:   "",
-		Error:    nil,
-	}
-
+	c := engine.pool.Get().(*Context)
 	c.Request = req
 	c.Writer = w
+	c.reset()
 
 	engine.handleContext(c)
+	engine.pool.Put(c)
+}
+
+//newContext for sync.pool
+func (engine *Engine) newContext() *Context {
+	return &Context{engine: engine}
 }
 
 // NoRoute adds handlers for NoRoute. It return a 404 code by default.
